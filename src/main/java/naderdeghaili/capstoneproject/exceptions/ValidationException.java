@@ -10,7 +10,7 @@ public class ValidationException extends RuntimeException {
 
     public ValidationException(List<String> errorsMessages) {
 
-        super("il payload contiene errori");
+        super("Validation errors in payload");
         this.errorsMessages = errorsMessages;
     }
 }

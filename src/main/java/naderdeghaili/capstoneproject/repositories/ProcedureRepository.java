@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface ProceduresRepository extends JpaRepository<Procedure, UUID> {
+public interface ProcedureRepository extends JpaRepository<Procedure, UUID> {
     Optional<Procedure> findByCode(String code);
 
     //ricerca procedure

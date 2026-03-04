@@ -36,7 +36,7 @@ public class User {
 
     public User(String firstName, String lastName, String email, String password, UserType role) {
         this.firstName = firstName;
-        this.lastName = User.this.lastName;
+        this.lastName = lastName;
         this.email = email;
         this.password = password;
         this.role = role;

@@ -42,12 +42,13 @@ public class TreatmentPlan {
     public TreatmentPlan() {
     }
 
-    public TreatmentPlan(Quote quote, TreatmentPlanStatus status, LocalDate expectedEndDate, String clinicalNotes) {
+    public TreatmentPlan(Quote quote, TreatmentPlanStatus status, LocalDate expectedEndDate, String clinicalNotes, Double totalAmount) {
         this.quote = quote;
         this.status = status;
         this.expectedEndDate = expectedEndDate;
         this.clinicalNotes = clinicalNotes;
         this.createdAt = LocalDateTime.now();
+        this.totalAmount = totalAmount;
     }
 
     @PreUpdate

@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface TreatmentPlansRepository extends JpaRepository<TreatmentPlan, UUID> {
+public interface TreatmentPlanRepository extends JpaRepository<TreatmentPlan, UUID> {
     Optional<TreatmentPlan> findByQuote_Id(UUID id);
 
     Page<TreatmentPlan> findByStatus(TreatmentPlanStatus status, Pageable pageable);

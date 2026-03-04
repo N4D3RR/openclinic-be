@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public interface AppointmentsRepository extends JpaRepository<Appointment, UUID> {
+public interface AppointmentRepository extends JpaRepository<Appointment, UUID> {
     Page<Appointment> findByPatient_Id(UUID id, Pageable pageable);
 
     Page<Appointment> findByUser_Id(UUID id, Pageable pageable);

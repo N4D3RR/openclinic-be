@@ -50,13 +50,13 @@ public class Appointment {
     public Appointment() {
     }
 
-    public Appointment(Patient patient, User user, TreatmentPlan treatmentPlan, LocalDateTime dateTime, Integer duration, AppointmentStatus status, String notes) {
+    public Appointment(Patient patient, User user, TreatmentPlan treatmentPlan, LocalDateTime dateTime, Integer duration, String notes) {
         this.patient = patient;
         this.user = user;
         this.treatmentPlan = treatmentPlan;
         this.dateTime = dateTime;
         this.duration = duration;
-        this.status = status;
+        this.status = AppointmentStatus.CONFIRMED;
         this.notes = notes;
         this.createdAt = LocalDateTime.now();
     }

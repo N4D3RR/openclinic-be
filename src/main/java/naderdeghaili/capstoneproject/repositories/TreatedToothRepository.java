@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;
 
-public interface TreatedTeethRepository extends JpaRepository<TreatedTooth, UUID> {
+public interface TreatedToothRepository extends JpaRepository<TreatedTooth, UUID> {
     Page<TreatedTooth> findByTreatment_Id(UUID id, Pageable pageable);
 
     //lista denti trattati del paziente

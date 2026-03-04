@@ -38,7 +38,7 @@ public class ErrorsHandler {
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorsDTO handleAuthorizationDeniedException(AuthorizationDeniedException ex) {
 
-        return new ErrorsDTO("Non disponi dei permessi necessari", LocalDateTime.now());
+        return new ErrorsDTO("You are not authorized", LocalDateTime.now());
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
@@ -52,7 +52,7 @@ public class ErrorsHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorsDTO handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
 
-        return new ErrorsDTO("Il tipo cliente deve essere PA, SAS, SRL, SPA o SNC ", LocalDateTime.now());
+        return new ErrorsDTO("Invalid request body " + ex.getMessage(), LocalDateTime.now());
     }
 
 

@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;
 
-public interface DocumentsRepository extends JpaRepository<Document, UUID> {
+public interface DocumentRepository extends JpaRepository<Document, UUID> {
     Page<Document> findByClinicalRecord_Id(UUID id, Pageable pageable);
 
     Page<Document> findByClinicalRecord_Patient_Id(UUID id, Pageable pageable);
