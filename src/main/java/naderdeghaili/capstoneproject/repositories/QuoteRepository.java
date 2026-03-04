@@ -17,5 +17,7 @@ public interface QuoteRepository extends JpaRepository<Quote, UUID> {
 
     Page<Quote> findByPatient_IdAndStatus(UUID id, QuoteStatus status, Pageable pageable);
 
+    Page<Quote> findByPatient_IdAndDentist_Id(UUID patientId, UUID dentistId, Pageable pageable);
 
+    Page<Quote> findByDentist_IdAndStatus(UUID dentistId, QuoteStatus status, Pageable pageable);
 }
