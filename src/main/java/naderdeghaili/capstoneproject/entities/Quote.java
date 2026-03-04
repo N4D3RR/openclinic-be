@@ -43,14 +43,13 @@ public class Quote {
     }
 
 
-    public Quote(QuoteStatus status, String notes, Patient patient, User dentist, List<QuoteItem> items) {
+    public Quote(QuoteStatus status, String notes, Patient patient, User dentist) {
 
         this.status = status;
         this.notes = notes;
         this.createdAt = LocalDateTime.now();
         this.patient = patient;
         this.dentist = dentist;
-        this.items = items;
     }
 
     public void addItem(QuoteItem item) {

@@ -35,9 +35,9 @@ public class Treatment {
     @Column(nullable = false)
     private LocalDate date;
 
-
     public Treatment() {
     }
+
 
     public Treatment(Appointment appointment, Procedure procedure, Double cost, String notes, String imageUrl, LocalDate date) {
         this.appointment = appointment;
@@ -46,6 +46,10 @@ public class Treatment {
         this.notes = notes;
         this.imageUrl = imageUrl;
         this.date = date;
+    }
+
+    public User getUser() {
+        return this.appointment.getUser();
     }
 
     public void addTreatedTooth(TreatedTooth tooth) {

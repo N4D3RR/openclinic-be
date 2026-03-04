@@ -33,22 +33,35 @@ public class TreatmentPlan {
     @Column(columnDefinition = "TEXT")
     private String clinicalNotes;
 
-    @Column(updatable = false)
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+
+    @Column(nullable = false)
+    private Double totalAmount;
 
     public TreatmentPlan() {
     }
 
-    public TreatmentPlan(Quote quote, List<Appointment> appointments, TreatmentPlanStatus status, LocalDate startDate, LocalDate expectedEndDate, String clinicalNotes) {
+    public TreatmentPlan(Quote quote, TreatmentPlanStatus status, LocalDate expectedEndDate, String clinicalNotes) {
         this.quote = quote;
-        this.appointments = appointments;
         this.status = status;
-        this.startDate = startDate;
         this.expectedEndDate = expectedEndDate;
         this.clinicalNotes = clinicalNotes;
         this.createdAt = LocalDateTime.now();
     }
 
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public void addAppointment(Appointment appointment) {
+        if (this.appointments.isEmpty()) {
+            this.startDate = appointment.getDateTime().toLocalDate();
+        }
+        this.appointments.add(appointment);
+        appointment.setTreatmentPlan(this);
+    }
 
     public UUID getId() {
         return id;
@@ -111,6 +124,22 @@ public class TreatmentPlan {
         this.createdAt = createdAt;
     }
 
+    public Double getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(Double totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
     @Override
     public String toString() {
         return "TreatmentPlan: " +
@@ -121,6 +150,8 @@ public class TreatmentPlan {
                 " | startDate: " + startDate +
                 " | expectedEndDate: " + expectedEndDate +
                 " | clinicalNotes: '" + clinicalNotes +
-                " | createdAt: " + createdAt;
+                " | totalAmount: " + totalAmount +
+                " | createdAt: " + createdAt
+                ;
     }
 }

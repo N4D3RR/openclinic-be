@@ -2,6 +2,9 @@ package naderdeghaili.capstoneproject.entities;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -22,25 +25,38 @@ public class ClinicalRecord {
     private Boolean signedConsent;
     private String notes;
 
-    //TODO: eventuale entity Document separata
-    private String documents;
+    @OneToMany(mappedBy = "clinicalRecord", cascade = CascadeType.ALL)
+    private List<Document> documents = new ArrayList<>();
+
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     @OneToOne
     @JoinColumn(name = "patient_id", nullable = false)
     private Patient patient;
 
-
     public ClinicalRecord() {
     }
 
-    public ClinicalRecord(String anamnesis, String allergies, String medications, String notes, String documents, Patient patient) {
+    public ClinicalRecord(String anamnesis, String allergies, String medications, String notes, Patient patient) {
         this.anamnesis = anamnesis;
         this.allergies = allergies;
         this.medications = medications;
         this.signedConsent = false;
         this.notes = notes;
-        this.documents = documents;
+        this.createdAt = LocalDateTime.now();
         this.patient = patient;
+    }
+
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public void addDocument(Document document) {
+        this.documents.add(document);
+        document.setClinicalRecord(this);
     }
 
     public UUID getId() {
@@ -87,11 +103,11 @@ public class ClinicalRecord {
         this.notes = notes;
     }
 
-    public String getDocuments() {
+    public List<Document> getDocuments() {
         return documents;
     }
 
-    public void setDocuments(String documents) {
+    public void setDocuments(List<Document> documents) {
         this.documents = documents;
     }
 
@@ -101,5 +117,27 @@ public class ClinicalRecord {
 
     public void setPatient(Patient patient) {
         this.patient = patient;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    @Override
+    public String toString() {
+        return "ClinicalRecord: " +
+                "id: " + id +
+                " | anamnesis: " + anamnesis +
+                " | allergies: " + allergies +
+                " | medications: " + medications +
+                " | signedConsent: " + signedConsent +
+                " | notes: " + notes +
+                " | documents: " + documents +
+                " | updatedAt: " + updatedAt +
+                " | patient: " + patient;
     }
 }

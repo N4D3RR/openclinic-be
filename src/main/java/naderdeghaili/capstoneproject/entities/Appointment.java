@@ -20,8 +20,8 @@ public class Appointment {
     private Patient patient;
 
     @ManyToOne
-    @JoinColumn(name = "dentist_id", nullable = false)
-    private User dentist;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @OneToMany(mappedBy = "appointment", cascade = CascadeType.ALL)
     private List<Treatment> treatments = new ArrayList<>();
@@ -50,9 +50,9 @@ public class Appointment {
     public Appointment() {
     }
 
-    public Appointment(Patient patient, User dentist, TreatmentPlan treatmentPlan, LocalDateTime dateTime, Integer duration, AppointmentStatus status, String notes) {
+    public Appointment(Patient patient, User user, TreatmentPlan treatmentPlan, LocalDateTime dateTime, Integer duration, AppointmentStatus status, String notes) {
         this.patient = patient;
-        this.dentist = dentist;
+        this.user = user;
         this.treatmentPlan = treatmentPlan;
         this.dateTime = dateTime;
         this.duration = duration;
@@ -79,12 +79,12 @@ public class Appointment {
         this.patient = patient;
     }
 
-    public User getDentist() {
-        return dentist;
+    public User getUser() {
+        return user;
     }
 
-    public void setDentist(User dentist) {
-        this.dentist = dentist;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public LocalDateTime getDateTime() {
@@ -119,6 +119,22 @@ public class Appointment {
         this.notes = notes;
     }
 
+    public List<Treatment> getTreatments() {
+        return treatments;
+    }
+
+    public void setTreatments(List<Treatment> treatments) {
+        this.treatments = treatments;
+    }
+
+    public TreatmentPlan getTreatmentPlan() {
+        return treatmentPlan;
+    }
+
+    public void setTreatmentPlan(TreatmentPlan treatmentPlan) {
+        this.treatmentPlan = treatmentPlan;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -134,7 +150,7 @@ public class Appointment {
         return "Appointment: " +
                 "id: " + id +
                 " | patient: " + patient +
-                " | dentist: " + dentist +
+                " | dentist: " + user +
                 " | dateTime: " + dateTime +
                 " | duration: " + duration +
                 " | status: " + status +
