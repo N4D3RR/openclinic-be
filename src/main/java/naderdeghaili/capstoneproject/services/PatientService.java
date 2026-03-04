@@ -7,6 +7,7 @@ import naderdeghaili.capstoneproject.payloads.PatientCreateDTO;
 import naderdeghaili.capstoneproject.payloads.PatientUpdateDTO;
 import naderdeghaili.capstoneproject.repositories.PatientRepository;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +24,8 @@ public class PatientService {
     }
 
     // GET ALL
-    public Page<Patient> getAll(Pageable pageable) {
+    public Page<Patient> getAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
         return patientRepository.findAll(pageable);
     }
 
@@ -34,7 +36,8 @@ public class PatientService {
     }
 
     // SEARCH BY LAST NAME
-    public Page<Patient> findByLastName(String lastName, Pageable pageable) {
+    public Page<Patient> findByLastName(String lastName, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
         return patientRepository.findByLastNameContainsIgnoreCase(lastName, pageable);
     }
 

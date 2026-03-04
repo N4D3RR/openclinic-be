@@ -6,8 +6,9 @@ import naderdeghaili.capstoneproject.entities.UserType;
 import naderdeghaili.capstoneproject.exceptions.NotFoundException;
 import naderdeghaili.capstoneproject.payloads.UserCreateDTO;
 import naderdeghaili.capstoneproject.payloads.UserUpdateDTO;
-import naderdeghaili.capstoneproject.repositories.UsersRepository;
+import naderdeghaili.capstoneproject.repositories.UserRepository;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,42 +17,44 @@ import java.util.UUID;
 
 @Service
 @Slf4j
-public class UserServices {
-    private final UsersRepository usersRepository;
+public class UserService {
+    private final UserRepository userRepository;
     private final PasswordEncoder bcrypt;
 
 
-    public UserServices(UsersRepository usersRepository, PasswordEncoder bcrypt) {
-        this.usersRepository = usersRepository;
+    public UserService(UserRepository userRepository, PasswordEncoder bcrypt) {
+        this.userRepository = userRepository;
         this.bcrypt = bcrypt;
     }
 
     //GET ALL
-    public Page<User> getAll(Pageable pageable) {
-        return usersRepository.findAll(pageable);
+    public Page<User> getAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return userRepository.findAll(pageable);
     }
 
     //GET BY ID
     public User findByID(UUID userId) {
-        return usersRepository.findById(userId).orElseThrow(() -> new NotFoundException("User with id " + userId + " not found"));
+        return userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User with id " + userId + " not found"));
 
     }
 
     //GET BY EMAIL
     public User findByEmail(String email) {
-        return usersRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("User with email " + email + " not found"));
+        return userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("User with email " + email + " not found"));
 
     }
 
     //GET BY ROLE
-    public Page<User> findByRole(UserType role, Pageable pageable) {
-        return usersRepository.findByRole(role, pageable);
+    public Page<User> findByRole(UserType role, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return userRepository.findByRole(role, pageable);
 
     }
 
     //SAVE
     public User saveUser(UserCreateDTO payload) {
-        if (usersRepository.existsByEmail(payload.email()))
+        if (userRepository.existsByEmail(payload.email()))
             throw new IllegalArgumentException("Email " + payload.email() + " already in use");
 
         User newUser = new User(
@@ -59,16 +62,16 @@ public class UserServices {
         );
 
         log.info("User " + payload.email() + " saved successfully");
-        return usersRepository.save(newUser);
+        return userRepository.save(newUser);
 
     }
 
     //UPDATE
-    public User updateUser(UUID userId, UserUpdateDTO payload) {
+    public User findByIdAndUpdate(UUID userId, UserUpdateDTO payload) {
         User found = this.findByID(userId);
 
         if (payload.email() != null && !found.getEmail().equals(payload.email())
-                && usersRepository.existsByEmail(payload.email()))
+                && userRepository.existsByEmail(payload.email()))
             throw new IllegalArgumentException("Email " + payload.email() + " already in use");
 
         if (payload.firstName() != null) found.setFirstName(payload.firstName());
@@ -78,14 +81,14 @@ public class UserServices {
         if (payload.role() != null) found.setRole(payload.role());
 
         log.info("User with id " + userId + " updated successfully");
-        return usersRepository.save(found);
+        return userRepository.save(found);
 
     }
 
     // DELETE
     public void findByIdAndDelete(UUID userId) {
         User found = this.findByID(userId);
-        usersRepository.delete(found);
+        userRepository.delete(found);
         log.info("User with id " + userId + " deleted successfully");
     }
 

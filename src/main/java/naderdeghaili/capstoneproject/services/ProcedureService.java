@@ -7,6 +7,7 @@ import naderdeghaili.capstoneproject.payloads.ProcedureCreateDTO;
 import naderdeghaili.capstoneproject.payloads.ProcedureUpdateDTO;
 import naderdeghaili.capstoneproject.repositories.ProcedureRepository;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +25,8 @@ public class ProcedureService {
     }
 
     // GET ALL
-    public Page<Procedure> getAll(Pageable pageable) {
+    public Page<Procedure> getAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
         return procedureRepository.findAll(pageable);
     }
 
@@ -35,7 +37,8 @@ public class ProcedureService {
     }
 
     // SEARCH BY NAME
-    public Page<Procedure> findByName(String name, Pageable pageable) {
+    public Page<Procedure> findByName(String name, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
         return procedureRepository.findByNameContainsIgnoreCase(name, pageable);
     }
 
