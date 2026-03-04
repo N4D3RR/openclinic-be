@@ -16,5 +16,7 @@ public interface TreatedToothRepository extends JpaRepository<TreatedTooth, UUID
     //storico dente specifico
     Page<TreatedTooth> findByToothCode(Integer toothCode, Pageable pageable);
 
+    Page<TreatedTooth> findByToothCodeAndTreatment_Appointment_Patient_Id(Integer toothCode, UUID patientId, Pageable pageable);
+
 
 }
