@@ -13,10 +13,10 @@ public class User {
     private UUID id;
 
     @Column(nullable = false)
-    private String name;
+    private String firstName;
 
     @Column(nullable = false)
-    private String surname;
+    private String lastName;
 
     @Column(nullable = false, unique = true)
     private String email;
@@ -34,9 +34,9 @@ public class User {
     public User() {
     }
 
-    public User(String name, String surname, String email, String password, UserType role) {
-        this.name = name;
-        this.surname = surname;
+    public User(String firstName, String lastName, String email, String password, UserType role) {
+        this.firstName = firstName;
+        this.lastName = User.this.lastName;
         this.email = email;
         this.password = password;
         this.role = role;
@@ -49,20 +49,20 @@ public class User {
         return id;
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public String getSurname() {
-        return surname;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setSurname(String surname) {
-        this.surname = surname;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getEmail() {
@@ -102,8 +102,8 @@ public class User {
     public String toString() {
         return "User: " +
                 "id: " + id +
-                " | name: " + name +
-                " | surname: " + surname +
+                " | firstName: " + firstName +
+                " | lastName: " + lastName +
                 " | email: " + email +
                 " | password: " + password +
                 " | role: " + role +
