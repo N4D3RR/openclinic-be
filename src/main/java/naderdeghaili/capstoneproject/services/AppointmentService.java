@@ -3,6 +3,7 @@ package naderdeghaili.capstoneproject.services;
 import lombok.extern.slf4j.Slf4j;
 import naderdeghaili.capstoneproject.entities.*;
 import naderdeghaili.capstoneproject.exceptions.NotFoundException;
+import naderdeghaili.capstoneproject.exceptions.UnauthorizedException;
 import naderdeghaili.capstoneproject.payloads.AppointmentCreateDTO;
 import naderdeghaili.capstoneproject.payloads.AppointmentUpdateDTO;
 import naderdeghaili.capstoneproject.repositories.AppointmentRepository;
@@ -30,40 +31,63 @@ public class AppointmentService {
         this.treatmentPlanService = treatmentPlanService;
     }
 
-    // GET ALL
-    public Page<Appointment> getAll(int page, int size) {
+    // GET ALL - ADMIN e SECRETARY vedono tutto, DENTIST solo i propri
+    public Page<Appointment> getAll(User currentUser, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return appointmentRepository.findAll(pageable);
+        if (isAdminOrSecretary(currentUser)) {
+            return appointmentRepository.findAll(pageable);
+        }
+        return appointmentRepository.findByUser_Id(currentUser.getId(), pageable);
     }
 
-    // GET BY ID
+    // GET BY ID - ADMIN e SECRETARY vedono tutto, DENTIST solo i propri
+    public Appointment findById(UUID appointmentId, User currentUser) {
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new NotFoundException("Appointment with id " + appointmentId + " not found"));
+        checkOwnership(appointment, currentUser);
+        return appointment;
+    }
+
+    //GET BY ID
     public Appointment findById(UUID appointmentId) {
         return appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new NotFoundException("Appointment with id " + appointmentId + " not found"));
     }
 
-    // GET BY PATIENT
-    public Page<Appointment> findByPatient(UUID patientId, int page, int size) {
+    // GET BY PATIENT - ADMIN e SECRETARY vedono tutto, DENTIST solo i propri
+    public Page<Appointment> findByPatient(UUID patientId, User currentUser, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return appointmentRepository.findByPatient_Id(patientId, pageable);
+        if (isAdminOrSecretary(currentUser)) {
+            return appointmentRepository.findByPatient_Id(patientId, pageable);
+        }
+        return appointmentRepository.findByPatient_IdAndUser_Id(patientId, currentUser.getId(), pageable);
     }
 
-    // GET BY USER
+    // GET BY USER - APPUNTAMENTI SINGOLO DENTISTA
     public Page<Appointment> findByUser(UUID userId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return appointmentRepository.findByUser_Id(userId, pageable);
     }
 
-    // GET BY DATE RANGE
-    public Page<Appointment> findByDateRange(LocalDateTime start, LocalDateTime end, int page, int size) {
+    // GET BY DATE RANGE - ADMIN e SECRETARY vedono tutto, DENTIST solo i propri
+    public Page<Appointment> findByDateRange(User currentUser, LocalDateTime start, LocalDateTime end, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return appointmentRepository.findByDateTimeBetween(start, end, pageable);
+        if (isAdminOrSecretary(currentUser)) {
+            return appointmentRepository.findByDateTimeBetween(start, end, pageable);
+        }
+        return appointmentRepository.findByUser_IdAndDateTimeBetween(currentUser.getId(), start, end, pageable);
     }
 
-    // SAVE
-    public Appointment saveAppointment(AppointmentCreateDTO payload) {
+    // SAVE - ADMIN e SECRETARY salvano tutto, DENTIST/HYGIENIST solo i propri appuntamenti
+    public Appointment saveAppointment(AppointmentCreateDTO payload, User currentUser) {
         Patient patient = patientService.findById(payload.patientId());
-        User user = userService.findByID(payload.userId());
+        User user;
+
+        if (isAdminOrSecretary(currentUser)) {
+            user = userService.findByID(payload.userId());
+        } else {
+            user = currentUser;
+        }
 
         if (user.getRole() != UserType.DENTIST && user.getRole() != UserType.HYGIENIST)
             throw new IllegalArgumentException("User must be a DENTIST or HYGIENIST to be assigned to an appointment");
@@ -88,9 +112,9 @@ public class AppointmentService {
         return appointmentRepository.save(appointment);
     }
 
-    // UPDATE
-    public Appointment findByIdAndUpdate(UUID id, AppointmentUpdateDTO payload) {
-        Appointment found = this.findById(id);
+    // UPDATE - ADMIN e SECRETARY modificano tutto, DENTIST solo i propri
+    public Appointment findByIdAndUpdate(UUID id, AppointmentUpdateDTO payload, User currentUser) {
+        Appointment found = this.findById(id, currentUser);
 
         if (payload.dateTime() != null) found.setDateTime(payload.dateTime());
         if (payload.duration() != null) found.setDuration(payload.duration());
@@ -110,13 +134,26 @@ public class AppointmentService {
         return appointmentRepository.save(found);
     }
 
-    // DELETE
-    public void findByIdAndDelete(UUID id) {
-        Appointment found = this.findById(id);
+    // DELETE - ADMIN/SECRETARY eliminano tutto, DENTIST/HYGIENIST solo i propri
+    public void findByIdAndDelete(UUID id, User currentUser) {
+
+        Appointment found = this.findById(id, currentUser);
 
         appointmentRepository.delete(found);
         log.info("Appointment with id " + id + " deleted successfully");
     }
 
+
+    //HELPER
+    private boolean isAdminOrSecretary(User user) {
+        return user.getRole() == UserType.ADMIN || user.getRole() == UserType.SECRETARY;
+    }
+
+    private void checkOwnership(Appointment appointment, User currentUser) {
+
+        if (!isAdminOrSecretary(currentUser) && !appointment.getUser().getId().equals(currentUser.getId())) {
+            throw new UnauthorizedException("You can only access your own appointments");
+        }
+    }
 
 }

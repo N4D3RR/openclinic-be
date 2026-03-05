@@ -106,9 +106,7 @@ public class QuoteService {
 
     //UPDATE — ADMIN può aggiornare tutto, DENTIST solo i propri
     public Quote findByIdAndUpdate(UUID quoteId, QuoteUpdateDTO payload, User currentUser) {
-        Quote found = quoteRepository.findById(quoteId)
-                .orElseThrow(() -> new NotFoundException("Quote with id " + quoteId + " not found"));
-        checkOwnership(found, currentUser);
+        Quote found = this.findById(quoteId, currentUser);
 
         if (payload.notes() != null) found.setNotes(payload.notes());
 
@@ -127,9 +125,7 @@ public class QuoteService {
 
     //DELETE — ADMIN può eliminare tutto, DENTIST solo i propri
     public void findByIdAndDelete(UUID quoteId, User currentUser) {
-        Quote found = quoteRepository.findById(quoteId)
-                .orElseThrow(() -> new NotFoundException("Quote with id " + quoteId + " not found"));
-        checkOwnership(found, currentUser);
+        Quote found = this.findById(quoteId, currentUser);
         quoteRepository.delete(found);
         log.info("Quote with id " + quoteId + " deleted by " + currentUser.getId());
     }
