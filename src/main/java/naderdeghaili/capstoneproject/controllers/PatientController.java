@@ -7,6 +7,7 @@ import naderdeghaili.capstoneproject.payloads.PatientUpdateDTO;
 import naderdeghaili.capstoneproject.services.PatientService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +25,7 @@ public class PatientController {
 
     //GET ALL /api/patients
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'SECRETARY')")
     public Page<Patient> getAll(@RequestParam(defaultValue = "0") int page,
                                 @RequestParam(defaultValue = "10") int size) {
         return patientService.getAll(page, size);
@@ -37,6 +39,7 @@ public class PatientController {
 
     // GET BY LASTNAME /api/patients/search?lastName=
     @GetMapping("/search")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'SECRETARY')")
     public Page<Patient> searchByLastName(@RequestParam String lastName,
                                           @RequestParam(defaultValue = "0") int page,
                                           @RequestParam(defaultValue = "10") int size) {
@@ -46,6 +49,7 @@ public class PatientController {
     // POST /api/patients
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'SECRETARY')")
     public Patient create(@RequestBody @Validated PatientCreateDTO payload, BindingResult validation) {
         if (validation.hasErrors())
             throw new ValidationException(validation.getAllErrors().stream()
@@ -56,6 +60,7 @@ public class PatientController {
 
     //PUT /api/patients/{patientId}
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'SECRETARY')")
     public Patient update(@PathVariable UUID id,
                           @RequestBody @Validated PatientUpdateDTO payload, BindingResult validation) {
         if (validation.hasErrors())
@@ -68,6 +73,7 @@ public class PatientController {
     // DELETE /api/patients/{id}
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'SECRETARY')")
     public void delete(@PathVariable UUID id) {
         patientService.findByIdAndDelete(id);
     }
