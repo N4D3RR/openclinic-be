@@ -1,10 +1,7 @@
 package naderdeghaili.capstoneproject.services;
 
 import lombok.extern.slf4j.Slf4j;
-import naderdeghaili.capstoneproject.entities.Procedure;
-import naderdeghaili.capstoneproject.entities.Quote;
-import naderdeghaili.capstoneproject.entities.QuoteItem;
-import naderdeghaili.capstoneproject.entities.QuoteStatus;
+import naderdeghaili.capstoneproject.entities.*;
 import naderdeghaili.capstoneproject.exceptions.NotFoundException;
 import naderdeghaili.capstoneproject.payloads.QuoteItemCreateDTO;
 import naderdeghaili.capstoneproject.payloads.QuoteItemUpdateDTO;
@@ -44,14 +41,15 @@ public class QuoteItemService {
     }
 
     // GET BY QUOTE
-    public Page<QuoteItem> findByQuote(UUID quoteId, int page, int size) {
+    public Page<QuoteItem> findByQuote(UUID quoteId, User currentUser, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
+        quoteService.findById(quoteId, currentUser);
         return quoteItemRepository.findByQuote_Id(quoteId, pageable);
     }
 
     // SAVE
-    public QuoteItem saveQuoteItem(QuoteItemCreateDTO payload) {
-        Quote quote = quoteService.findById(payload.quoteId());
+    public QuoteItem saveQuoteItem(QuoteItemCreateDTO payload, User currentUser) {
+        Quote quote = quoteService.findById(payload.quoteId(), currentUser);
 
         if (quote.getStatus() != QuoteStatus.DRAFT)
             throw new IllegalArgumentException("Can only add items to a DRAFT quote");
@@ -72,8 +70,9 @@ public class QuoteItemService {
     }
 
     // UPDATE
-    public QuoteItem findByIdAndUpdate(UUID id, QuoteItemUpdateDTO payload) {
+    public QuoteItem findByIdAndUpdate(UUID id, QuoteItemUpdateDTO payload, User currentUser) {
         QuoteItem found = this.findById(id);
+        quoteService.findById(found.getQuote().getId(), currentUser);
 
         if (found.getQuote().getStatus() != QuoteStatus.DRAFT)
             throw new IllegalArgumentException("Can only modify items of a DRAFT quote");
@@ -86,8 +85,9 @@ public class QuoteItemService {
     }
 
     // DELETE
-    public void findByIdAndDelete(UUID id) {
+    public void findByIdAndDelete(UUID id, User currentUser) {
         QuoteItem found = this.findById(id);
+        quoteService.findById(found.getQuote().getId(), currentUser);
 
         if (found.getQuote().getStatus() != QuoteStatus.DRAFT)
             throw new IllegalArgumentException("Can only delete items from a DRAFT quote");
