@@ -33,7 +33,7 @@ public class TreatmentPlanController {
     }
 
     //GET BY ID  - api/treatment-plans/{treatmentPlanId}
-    @GetMapping("/{treatmentPlanId")
+    @GetMapping("/{treatmentPlanId}")
     public TreatmentPlan getById(@PathVariable UUID treatmentPlanId) {
 
         return this.treatmentPlanService.findById(treatmentPlanId);

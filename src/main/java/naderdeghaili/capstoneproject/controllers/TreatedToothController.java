@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/treated-teeth")
+@RequestMapping("/api/treated-teeth")
 @PreAuthorize("hasAnyAuthority('ADMIN', 'DENTIST','HYGIENIST')")
 public class TreatedToothController {
 

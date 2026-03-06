@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/appointments")
+@RequestMapping("/api/appointments")
 public class AppointmentController {
 
     private final AppointmentService appointmentService;
@@ -106,6 +106,5 @@ public class AppointmentController {
     ) {
         this.appointmentService.findByIdAndDelete(appointmentId, currentUser);
     }
-
-
+    
 }
