@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+//TODO: mailgun support per promemoria appuntamenti
 @Entity
 @Table(name = "appointments")
 public class Appointment {
@@ -58,12 +59,17 @@ public class Appointment {
         this.duration = duration;
         this.status = AppointmentStatus.CONFIRMED;
         this.notes = notes;
-        this.createdAt = LocalDateTime.now();
+
     }
 
     public void addTreatment(Treatment treatment) {
         this.treatments.add(treatment);
         treatment.setAppointment(this);
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
     }
 
     //getter e setter
@@ -139,18 +145,14 @@ public class Appointment {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
 
     //toString
     @Override
     public String toString() {
         return "Appointment: " +
                 "id: " + id +
-                " | patient: " + patient +
-                " | dentist: " + user +
+                " | patient: " + (patient != null ? patient.getId() : null) +
+                " | dentist: " + (user != null ? user.getId() : null) +
                 " | dateTime: " + dateTime +
                 " | duration: " + duration +
                 " | status: " + status +

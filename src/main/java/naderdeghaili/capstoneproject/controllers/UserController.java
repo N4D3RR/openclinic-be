@@ -3,7 +3,9 @@ package naderdeghaili.capstoneproject.controllers;
 import naderdeghaili.capstoneproject.entities.User;
 import naderdeghaili.capstoneproject.entities.UserType;
 import naderdeghaili.capstoneproject.exceptions.ValidationException;
+import naderdeghaili.capstoneproject.mappers.DTOMapper;
 import naderdeghaili.capstoneproject.payloads.UserCreateDTO;
+import naderdeghaili.capstoneproject.payloads.UserResponseDTO;
 import naderdeghaili.capstoneproject.payloads.UserUpdateDTO;
 import naderdeghaili.capstoneproject.services.UserService;
 import org.springframework.data.domain.Page;
@@ -21,63 +23,65 @@ import java.util.UUID;
 public class UserController {
 
     private final UserService userService;
+    private final DTOMapper mapper;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, DTOMapper mapper) {
         this.userService = userService;
+        this.mapper = mapper;
     }
 
     //GET /api/users/me - utente loggato
     @GetMapping("/me")
-    public User getMe(@AuthenticationPrincipal User currentUser) {
-        return currentUser;
+    public UserResponseDTO getMe(@AuthenticationPrincipal User currentUser) {
+        return mapper.toUserDTO(currentUser);
     }
 
     //GET ALL /api/users
     @GetMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    public Page<User> getAll(@RequestParam(defaultValue = "0") int page,
-                             @RequestParam(defaultValue = "10") int size) {
-        return userService.getAll(page, size);
+    public Page<UserResponseDTO> getAll(@RequestParam(defaultValue = "0") int page,
+                                        @RequestParam(defaultValue = "10") int size) {
+        return this.userService.getAll(page, size).map(mapper::toUserDTO);
     }
 
     //GET BY ID /api/users/{userId}
     @GetMapping("/{userId}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public User getById(@PathVariable UUID userId) {
-        return userService.findByID(userId);
+    public UserResponseDTO getById(@PathVariable UUID userId) {
+        return mapper.toUserDTO(this.userService.findByID(userId));
     }
 
     //GET BY ROLE /api/users/role
     @GetMapping("/role")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public Page<User> getByRole(@RequestParam UserType role,
-                                @RequestParam(defaultValue = "0") int page,
-                                @RequestParam(defaultValue = "10") int size) {
-        return userService.findByRole(role, page, size);
+    public Page<UserResponseDTO> getByRole(@RequestParam UserType role,
+                                           @RequestParam(defaultValue = "0") int page,
+                                           @RequestParam(defaultValue = "10") int size) {
+        return this.userService.findByRole(role, page, size).map(mapper::toUserDTO);
     }
 
     //POST /api/users
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAuthority('ADMIN')")
-    public User create(@RequestBody @Validated UserCreateDTO payload, BindingResult validation) {
+    public UserResponseDTO create(@RequestBody @Validated UserCreateDTO payload, BindingResult validation) {
         if (validation.hasErrors())
             throw new ValidationException(validation.getAllErrors().stream()
                     .map(e -> e.getDefaultMessage()).toList());
 
-        return userService.saveUser(payload);
+        return mapper.toUserDTO(this.userService.saveUser(payload));
     }
 
     //PUT /api/users/{userId}
     @PutMapping("/{userId}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public User update(@PathVariable UUID userId,
-                       @RequestBody @Validated UserUpdateDTO payload, BindingResult validation) {
+    public UserResponseDTO update(@PathVariable UUID userId,
+                                  @RequestBody @Validated UserUpdateDTO payload, BindingResult validation) {
         if (validation.hasErrors())
             throw new ValidationException(validation.getAllErrors().stream()
                     .map(e -> e.getDefaultMessage()).toList());
 
-        return userService.findByIdAndUpdate(userId, payload);
+        return mapper.toUserDTO(this.userService.findByIdAndUpdate(userId, payload));
     }
 
 
@@ -86,6 +90,6 @@ public class UserController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAuthority('ADMIN')")
     public void delete(@PathVariable UUID userId) {
-        userService.findByIdAndDelete(userId);
+        this.userService.findByIdAndDelete(userId);
     }
 }

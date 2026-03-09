@@ -1,8 +1,9 @@
 package naderdeghaili.capstoneproject.controllers;
 
-import naderdeghaili.capstoneproject.entities.Procedure;
 import naderdeghaili.capstoneproject.exceptions.ValidationException;
+import naderdeghaili.capstoneproject.mappers.DTOMapper;
 import naderdeghaili.capstoneproject.payloads.ProcedureCreateDTO;
+import naderdeghaili.capstoneproject.payloads.ProcedureResponseDTO;
 import naderdeghaili.capstoneproject.payloads.ProcedureUpdateDTO;
 import naderdeghaili.capstoneproject.services.ProcedureService;
 import org.springframework.data.domain.Page;
@@ -19,57 +20,64 @@ import java.util.UUID;
 public class ProcedureController {
 
     private final ProcedureService procedureService;
+    private final DTOMapper mapper;
 
-    public ProcedureController(ProcedureService procedureService) {
+    public ProcedureController(ProcedureService procedureService, DTOMapper mapper) {
         this.procedureService = procedureService;
+        this.mapper = mapper;
     }
 
-    // GET — tutti gli utenti autenticati
+    //GET ALL - api/procedures
     @GetMapping
-    public Page<Procedure> getAll(@RequestParam(defaultValue = "0") int page,
-                                  @RequestParam(defaultValue = "10") int size) {
-        return procedureService.getAll(page, size);
+    public Page<ProcedureResponseDTO> getAll(@RequestParam(defaultValue = "0") int page,
+                                             @RequestParam(defaultValue = "10") int size) {
+        return this.procedureService.getAll(page, size).map(mapper::toProcedureDTO);
     }
 
+    //GET BY ID - api/procedures/{id}
     @GetMapping("/{id}")
-    public Procedure getById(@PathVariable UUID id) {
-        return procedureService.findById(id);
+    public ProcedureResponseDTO getById(@PathVariable UUID id) {
+        return mapper.toProcedureDTO(this.procedureService.findById(id));
     }
 
+    //GET BY NAME - api/procedures/search
     @GetMapping("/search")
-    public Page<Procedure> searchByName(@RequestParam String name,
-                                        @RequestParam(defaultValue = "0") int page,
-                                        @RequestParam(defaultValue = "10") int size) {
-        return procedureService.findByName(name, page, size);
+    public Page<ProcedureResponseDTO> searchByName(@RequestParam String name,
+                                                   @RequestParam(defaultValue = "0") int page,
+                                                   @RequestParam(defaultValue = "10") int size) {
+        return this.procedureService.findByName(name, page, size).map(mapper::toProcedureDTO);
     }
 
-    // POST/PUT/DELETE — solo ADMIN
+    //POST - api/procedures
+    //SOLO ADMIN
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAuthority('ADMIN')")
-    public Procedure create(@RequestBody @Validated ProcedureCreateDTO payload, BindingResult validation) {
+    public ProcedureResponseDTO create(@RequestBody @Validated ProcedureCreateDTO payload, BindingResult validation) {
         if (validation.hasErrors())
             throw new ValidationException(validation.getAllErrors().stream()
                     .map(e -> e.getDefaultMessage()).toList());
 
-        return procedureService.save(payload);
+        return mapper.toProcedureDTO(this.procedureService.save(payload));
     }
 
+    //PUT - api/procedures/{id}
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public Procedure update(@PathVariable UUID id,
-                            @RequestBody @Validated ProcedureUpdateDTO payload, BindingResult validation) {
+    public ProcedureResponseDTO update(@PathVariable UUID id,
+                                       @RequestBody @Validated ProcedureUpdateDTO payload, BindingResult validation) {
         if (validation.hasErrors())
             throw new ValidationException(validation.getAllErrors().stream()
                     .map(e -> e.getDefaultMessage()).toList());
 
-        return procedureService.findByIdAndUpdate(id, payload);
+        return mapper.toProcedureDTO(this.procedureService.findByIdAndUpdate(id, payload));
     }
 
+    //DELETE - api/procedures/{id}
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAuthority('ADMIN')")
     public void delete(@PathVariable UUID id) {
-        procedureService.findByIdAndDelete(id);
+        this.procedureService.findByIdAndDelete(id);
     }
 }

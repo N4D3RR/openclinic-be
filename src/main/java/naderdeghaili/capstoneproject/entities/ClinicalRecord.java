@@ -44,7 +44,6 @@ public class ClinicalRecord {
         this.medications = medications;
         this.signedConsent = false;
         this.notes = notes;
-        this.createdAt = LocalDateTime.now();
         this.patient = patient;
     }
 
@@ -53,6 +52,13 @@ public class ClinicalRecord {
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
 
     public void addDocument(Document document) {
         this.documents.add(document);
@@ -123,8 +129,8 @@ public class ClinicalRecord {
         return updatedAt;
     }
 
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
     @Override
@@ -136,8 +142,8 @@ public class ClinicalRecord {
                 " | medications: " + medications +
                 " | signedConsent: " + signedConsent +
                 " | notes: " + notes +
-                " | documents: " + documents +
+                " | documents count: " + documents.size() +
                 " | updatedAt: " + updatedAt +
-                " | patient: " + patient;
+                " | patient: " + (patient != null ? patient.getId() : null);
     }
 }

@@ -1,8 +1,9 @@
 package naderdeghaili.capstoneproject.controllers;
 
-import naderdeghaili.capstoneproject.entities.Patient;
 import naderdeghaili.capstoneproject.exceptions.ValidationException;
+import naderdeghaili.capstoneproject.mappers.DTOMapper;
 import naderdeghaili.capstoneproject.payloads.PatientCreateDTO;
+import naderdeghaili.capstoneproject.payloads.PatientResponseDTO;
 import naderdeghaili.capstoneproject.payloads.PatientUpdateDTO;
 import naderdeghaili.capstoneproject.services.PatientService;
 import org.springframework.data.domain.Page;
@@ -18,56 +19,59 @@ import java.util.UUID;
 @RequestMapping("/api/patients")
 public class PatientController {
     private final PatientService patientService;
+    private final DTOMapper mapper;
 
-    public PatientController(PatientService patientService) {
+
+    public PatientController(PatientService patientService, DTOMapper mapper) {
         this.patientService = patientService;
+        this.mapper = mapper;
     }
 
     //GET ALL /api/patients
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADMIN', 'SECRETARY')")
-    public Page<Patient> getAll(@RequestParam(defaultValue = "0") int page,
-                                @RequestParam(defaultValue = "10") int size) {
-        return patientService.getAll(page, size);
+    public Page<PatientResponseDTO> getAll(@RequestParam(defaultValue = "0") int page,
+                                           @RequestParam(defaultValue = "10") int size) {
+        return this.patientService.getAll(page, size).map(mapper::toPatientDTO);
     }
 
     //GET BY ID /api/patients/{patientId}
     @GetMapping("/{patientId}")
-    public Patient getById(@PathVariable UUID patientId) {
-        return patientService.findById(patientId);
+    public PatientResponseDTO getById(@PathVariable UUID patientId) {
+        return mapper.toPatientDTO(this.patientService.findById(patientId));
     }
 
     // GET BY LASTNAME /api/patients/search?lastName=
     @GetMapping("/search")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'SECRETARY')")
-    public Page<Patient> searchByLastName(@RequestParam String lastName,
-                                          @RequestParam(defaultValue = "0") int page,
-                                          @RequestParam(defaultValue = "10") int size) {
-        return patientService.findByLastName(lastName, page, size);
+    public Page<PatientResponseDTO> searchByLastName(@RequestParam String lastName,
+                                                     @RequestParam(defaultValue = "0") int page,
+                                                     @RequestParam(defaultValue = "10") int size) {
+        return this.patientService.findByLastName(lastName, page, size).map(mapper::toPatientDTO);
     }
 
     // POST /api/patients
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAnyAuthority('ADMIN', 'SECRETARY')")
-    public Patient create(@RequestBody @Validated PatientCreateDTO payload, BindingResult validation) {
+    public PatientResponseDTO create(@RequestBody @Validated PatientCreateDTO payload, BindingResult validation) {
         if (validation.hasErrors())
             throw new ValidationException(validation.getAllErrors().stream()
                     .map(e -> e.getDefaultMessage()).toList());
 
-        return patientService.savePatient(payload);
+        return mapper.toPatientDTO(this.patientService.savePatient(payload));
     }
 
     //PUT /api/patients/{patientId}
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'SECRETARY')")
-    public Patient update(@PathVariable UUID id,
-                          @RequestBody @Validated PatientUpdateDTO payload, BindingResult validation) {
+    public PatientResponseDTO update(@PathVariable UUID id,
+                                     @RequestBody @Validated PatientUpdateDTO payload, BindingResult validation) {
         if (validation.hasErrors())
             throw new ValidationException(validation.getAllErrors().stream()
                     .map(e -> e.getDefaultMessage()).toList());
 
-        return patientService.findByIdAndUpdate(id, payload);
+        return mapper.toPatientDTO(this.patientService.findByIdAndUpdate(id, payload));
     }
 
     // DELETE /api/patients/{id}
@@ -75,7 +79,7 @@ public class PatientController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAnyAuthority('ADMIN', 'SECRETARY')")
     public void delete(@PathVariable UUID id) {
-        patientService.findByIdAndDelete(id);
+        this.patientService.findByIdAndDelete(id);
     }
 
 }

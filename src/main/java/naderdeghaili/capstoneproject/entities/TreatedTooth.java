@@ -63,7 +63,7 @@ public class TreatedTooth {
         return "TreatedTooth: " +
                 "id: " + id +
                 " | toothCode: " + toothCode +
-                " | treatment: " + treatment +
+                " | treatment: " + (treatment != null ? treatment.getId() : null) +
                 " | surface: " + surface;
     }
 }

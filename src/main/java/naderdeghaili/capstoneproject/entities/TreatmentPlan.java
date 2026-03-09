@@ -2,6 +2,7 @@ package naderdeghaili.capstoneproject.entities;
 
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -37,17 +38,16 @@ public class TreatmentPlan {
     private LocalDateTime updatedAt;
 
     @Column(nullable = false)
-    private Double totalAmount;
+    private BigDecimal totalAmount;
 
     public TreatmentPlan() {
     }
 
-    public TreatmentPlan(Quote quote, TreatmentPlanStatus status, LocalDate expectedEndDate, String clinicalNotes, Double totalAmount) {
+    public TreatmentPlan(Quote quote, TreatmentPlanStatus status, LocalDate expectedEndDate, String clinicalNotes, BigDecimal totalAmount) {
         this.quote = quote;
         this.status = status;
         this.expectedEndDate = expectedEndDate;
         this.clinicalNotes = clinicalNotes;
-        this.createdAt = LocalDateTime.now();
         this.totalAmount = totalAmount;
     }
 
@@ -55,6 +55,13 @@ public class TreatmentPlan {
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
 
     public void addAppointment(Appointment appointment) {
         if (this.appointments.isEmpty()) {
@@ -125,11 +132,11 @@ public class TreatmentPlan {
         this.createdAt = createdAt;
     }
 
-    public Double getTotalAmount() {
+    public BigDecimal getTotalAmount() {
         return totalAmount;
     }
 
-    public void setTotalAmount(Double totalAmount) {
+    public void setTotalAmount(BigDecimal totalAmount) {
         this.totalAmount = totalAmount;
     }
 
@@ -145,8 +152,8 @@ public class TreatmentPlan {
     public String toString() {
         return "TreatmentPlan: " +
                 "id: " + id +
-                " | quote: " + quote +
-                " | appointments: " + appointments +
+                " | quote: " + (quote != null ? quote.getId() : null) +
+                " | appointments count: " + appointments.size() +
                 " | status: " + status +
                 " | startDate: " + startDate +
                 " | expectedEndDate: " + expectedEndDate +

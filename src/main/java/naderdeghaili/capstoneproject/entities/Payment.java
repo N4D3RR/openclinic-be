@@ -3,6 +3,7 @@ package naderdeghaili.capstoneproject.entities;
 
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -16,7 +17,7 @@ public class Payment {
     private UUID id;
 
     @Column(nullable = false)
-    private Double amount;
+    private BigDecimal amount;
 
     @Column(nullable = false)
     private LocalDate paymentDate;
@@ -44,26 +45,30 @@ public class Payment {
     }
 
 
-    public Payment(Double amount, LocalDate paymentDate, PaymentMethod method, PaymentStatus status, String notes, Patient patient, Appointment appointment) {
+    public Payment(BigDecimal amount, LocalDate paymentDate, PaymentMethod method, PaymentStatus status, String notes, Patient patient, Appointment appointment) {
         this.amount = amount;
         this.paymentDate = paymentDate;
         this.method = method;
         this.status = status;
         this.notes = notes;
-        this.createdAt = LocalDateTime.now();
         this.patient = patient;
         this.appointment = appointment;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
     }
 
     public UUID getId() {
         return id;
     }
 
-    public Double getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
-    public void setAmount(Double amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 
@@ -133,8 +138,8 @@ public class Payment {
                 " | status: " + status +
                 " | notes: " + notes +
                 " | createdAt: " + createdAt +
-                " | patient: " + patient +
-                " | appointment: " + appointment;
+                " | patient: " + (patient != null ? patient.getId() : null) +
+                " | appointment: " + (appointment != null ? appointment.getId() : null);
     }
 
 }

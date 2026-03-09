@@ -2,6 +2,7 @@ package naderdeghaili.capstoneproject.entities;
 
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +28,7 @@ public class Treatment {
     private List<TreatedTooth> treatedToothList = new ArrayList<>();
 
     @Column(nullable = false)
-    private Double cost;
+    private BigDecimal cost;
 
     private String notes;
     private String imageUrl;
@@ -39,7 +40,7 @@ public class Treatment {
     }
 
 
-    public Treatment(Appointment appointment, Procedure procedure, Double cost, String notes, String imageUrl, LocalDate date) {
+    public Treatment(Appointment appointment, Procedure procedure, BigDecimal cost, String notes, String imageUrl, LocalDate date) {
         this.appointment = appointment;
         this.procedure = procedure;
         this.cost = cost;
@@ -48,13 +49,14 @@ public class Treatment {
         this.date = date;
     }
 
-    public User getUser() {
-        return this.appointment.getUser();
-    }
 
     public void addTreatedTooth(TreatedTooth tooth) {
         this.treatedToothList.add(tooth);
         tooth.setTreatment(this);
+    }
+
+    public User getUser() {
+        return this.appointment.getUser();
     }
 
 
@@ -79,11 +81,11 @@ public class Treatment {
         this.procedure = procedure;
     }
 
-    public Double getCost() {
+    public BigDecimal getCost() {
         return cost;
     }
 
-    public void setCost(Double cost) {
+    public void setCost(BigDecimal cost) {
         this.cost = cost;
     }
 
@@ -111,12 +113,16 @@ public class Treatment {
         this.date = date;
     }
 
+    public List<TreatedTooth> getTreatedToothList() {
+        return treatedToothList;
+    }
+
     @Override
     public String toString() {
         return "Treatment: " +
                 "id: " + id +
-                " | appointment: " + appointment +
-                " | procedure: " + procedure +
+                " | appointment: " + (appointment != null ? appointment.getId() : null) +
+                " | procedure: " + (procedure != null ? procedure.getName() : null) +
                 " | cost: " + cost +
                 " | notes: " + notes +
                 " | imageUrl: " + imageUrl +

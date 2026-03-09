@@ -15,8 +15,8 @@ public record UserCreateDTO(
         String email,
 
         @NotBlank(message = "Password is required")
-        @Size(min = 4, message = "Password must be at least 4 characters")
-        @Pattern(regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{4,}$",
+        @Size(min = 8, message = "Password must be at least 8 characters")
+        @Pattern(regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$",
                 message = "Password must contain at least one uppercase, one lowercase and one number")
         String password,
 

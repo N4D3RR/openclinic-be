@@ -104,7 +104,7 @@ public class Document {
                 " | type: " + type +
                 " | notes:" + notes +
                 " | uploadedAt: " + uploadedAt +
-                " | clinicalRecord: " + clinicalRecord
+                " | clinicalRecord: " + (clinicalRecord != null ? clinicalRecord.getId() : null)
                 ;
     }
 }

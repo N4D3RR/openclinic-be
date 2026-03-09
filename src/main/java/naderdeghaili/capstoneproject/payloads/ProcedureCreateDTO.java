@@ -2,6 +2,8 @@ package naderdeghaili.capstoneproject.payloads;
 
 import jakarta.validation.constraints.*;
 
+import java.math.BigDecimal;
+
 public record ProcedureCreateDTO(
         @NotBlank(message = "Code is required")
         String code,
@@ -17,7 +19,7 @@ public record ProcedureCreateDTO(
         Integer durationInMinutes,
 
         @NotNull(message = "Price is required")
-        @Positive(message = "Price must be positive")
-        Double price
+        @DecimalMin(value = "0.01", message = "Amount must be greater than 0")
+        BigDecimal price
 ) {
 }

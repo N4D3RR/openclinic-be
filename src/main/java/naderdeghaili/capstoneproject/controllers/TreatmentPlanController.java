@@ -1,7 +1,8 @@
 package naderdeghaili.capstoneproject.controllers;
 
-import naderdeghaili.capstoneproject.entities.TreatmentPlan;
 import naderdeghaili.capstoneproject.exceptions.ValidationException;
+import naderdeghaili.capstoneproject.mappers.DTOMapper;
+import naderdeghaili.capstoneproject.payloads.TreatmentPlanResponseDTO;
 import naderdeghaili.capstoneproject.payloads.TreatmentPlanUpdateDTO;
 import naderdeghaili.capstoneproject.services.TreatmentPlanService;
 import org.springframework.data.domain.Page;
@@ -19,38 +20,40 @@ import java.util.UUID;
 public class TreatmentPlanController {
 
     private final TreatmentPlanService treatmentPlanService;
+    private final DTOMapper mapper;
 
-    public TreatmentPlanController(TreatmentPlanService treatmentPlanService) {
+    public TreatmentPlanController(TreatmentPlanService treatmentPlanService, DTOMapper mapper) {
         this.treatmentPlanService = treatmentPlanService;
+        this.mapper = mapper;
     }
 
     //GET ALL - api/treatment-plans
     @GetMapping
-    public Page<TreatmentPlan> getAll(@RequestParam(defaultValue = "0") int page,
-                                      @RequestParam(defaultValue = "10") int size) {
+    public Page<TreatmentPlanResponseDTO> getAll(@RequestParam(defaultValue = "0") int page,
+                                                 @RequestParam(defaultValue = "10") int size) {
 
-        return this.treatmentPlanService.getAll(page, size);
+        return this.treatmentPlanService.getAll(page, size).map(mapper::toTreatmentPlanDTO);
     }
 
     //GET BY ID  - api/treatment-plans/{treatmentPlanId}
     @GetMapping("/{treatmentPlanId}")
-    public TreatmentPlan getById(@PathVariable UUID treatmentPlanId) {
+    public TreatmentPlanResponseDTO getById(@PathVariable UUID treatmentPlanId) {
 
-        return this.treatmentPlanService.findById(treatmentPlanId);
+        return mapper.toTreatmentPlanDTO(treatmentPlanService.findById(treatmentPlanId));
     }
 
     //GET BY PATIENT - api/treatment-plans/patient/{patientId}
     @GetMapping("/patient/{patientId}")
-    public Page<TreatmentPlan> getByPatient(@PathVariable UUID patientId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+    public Page<TreatmentPlanResponseDTO> getByPatient(@PathVariable UUID patientId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
 
-        return this.treatmentPlanService.findByPatient(patientId, page, size);
+        return this.treatmentPlanService.findByPatient(patientId, page, size).map(mapper::toTreatmentPlanDTO);
     }
 
     //GET BY QUOTE - api/treatment-plans/quote/{quoteId}
     @GetMapping("/quote/{quoteId}")
-    public TreatmentPlan getByQuote(@PathVariable UUID quoteId) {
+    public TreatmentPlanResponseDTO getByQuote(@PathVariable UUID quoteId) {
 
-        return this.treatmentPlanService.findByQuote(quoteId);
+        return mapper.toTreatmentPlanDTO(this.treatmentPlanService.findByQuote(quoteId));
     }
 
     //POST - viene eseguita automaticamente quando eseguo un PUT del Quote
@@ -58,14 +61,14 @@ public class TreatmentPlanController {
 
     //PUT - api/treatment-plans/{treatmentPlanId}
     @PutMapping("/{treatmentPlanId}")
-    public TreatmentPlan update(@PathVariable UUID treatmentPlanId,
-                                @RequestBody @Validated TreatmentPlanUpdateDTO payload,
-                                BindingResult validation) {
+    public TreatmentPlanResponseDTO update(@PathVariable UUID treatmentPlanId,
+                                           @RequestBody @Validated TreatmentPlanUpdateDTO payload,
+                                           BindingResult validation) {
 
         if (validation.hasErrors())
             throw new ValidationException(validation.getAllErrors().stream().map(e -> e.getDefaultMessage()).toList());
 
-        return this.treatmentPlanService.findByIdAndUpdate(treatmentPlanId, payload);
+        return mapper.toTreatmentPlanDTO(this.treatmentPlanService.findByIdAndUpdate(treatmentPlanId, payload));
     }
 
     //DELETE - api/treatment-plans/{treatmentPlanId}

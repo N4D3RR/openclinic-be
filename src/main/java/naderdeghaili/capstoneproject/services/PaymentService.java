@@ -79,7 +79,7 @@ public class PaymentService {
                 payload.amount(),
                 payload.paymentDate(),
                 payload.method(),
-                PaymentStatus.PAID,
+                payload.status(),
                 payload.notes(),
                 patient,
                 appointment

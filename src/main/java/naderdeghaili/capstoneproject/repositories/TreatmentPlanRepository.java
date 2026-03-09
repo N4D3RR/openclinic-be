@@ -16,5 +16,7 @@ public interface TreatmentPlanRepository extends JpaRepository<TreatmentPlan, UU
 
     Page<TreatmentPlan> findByQuote_Patient_Id(UUID id, Pageable pageable);
 
+    boolean existsByQuote_Id(UUID id);
+
 
 }

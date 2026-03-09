@@ -3,6 +3,7 @@ package naderdeghaili.capstoneproject.entities;
 
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -26,7 +27,7 @@ public class Procedure {
     private Integer durationInMinutes;
 
     @Column(nullable = false)
-    private Double price;
+    private BigDecimal price;
 
     private LocalDateTime createdAt;
 
@@ -34,12 +35,16 @@ public class Procedure {
     public Procedure() {
     }
 
-    public Procedure(String code, String name, String description, Integer durationInMinutes, Double price) {
+    public Procedure(String code, String name, String description, Integer durationInMinutes, BigDecimal price) {
         this.code = code;
         this.name = name;
         this.description = description;
         this.durationInMinutes = durationInMinutes;
         this.price = price;
+    }
+
+    @PrePersist
+    protected void onCreate() {
         this.createdAt = LocalDateTime.now();
     }
 
@@ -81,11 +86,11 @@ public class Procedure {
         this.durationInMinutes = durationInMinutes;
     }
 
-    public Double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 

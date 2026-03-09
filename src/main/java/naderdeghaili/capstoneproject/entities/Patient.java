@@ -7,9 +7,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+//TODO: cloudinary per upload foto
 @Entity
 @Table(name = "patients")
 public class Patient {
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -51,6 +53,10 @@ public class Patient {
         this.email = email;
         this.phone = phone;
         this.address = address;
+    }
+
+    @PrePersist
+    protected void onCreate() {
         this.createdAt = LocalDateTime.now();
     }
 

@@ -1,9 +1,10 @@
 package naderdeghaili.capstoneproject.payloads;
 
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
-import jakarta.validation.constraints.Positive;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -14,8 +15,8 @@ public record TreatmentCreateDTO(@NotNull(message = "Appointment id is required"
                                  UUID procedureId,
 
                                  @NotNull(message = "Cost is required")
-                                 @Positive(message = "Cost must be positive")
-                                 Double cost,
+                                 @DecimalMin(value = "0.01", message = "Amount must be greater than 0")
+                                 BigDecimal cost,
 
                                  String notes,
                                  String imageUrl,

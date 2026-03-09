@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Service
@@ -52,9 +53,9 @@ public class TreatmentPlanService {
 
     // CREATE FROM QUOTE — in QuoteService quando status diventa ACCEPTED viene creato il treatment plan
     public TreatmentPlan createFromQuote(Quote quote) {
-        double totalAmount = quote.getItems().stream()
-                .mapToDouble(QuoteItem::getQuotedPrice)
-                .sum();
+        BigDecimal totalAmount = quote.getItems().stream()
+                .map(QuoteItem::getQuotedPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         TreatmentPlan plan = new TreatmentPlan(
                 quote,
@@ -95,4 +96,9 @@ public class TreatmentPlanService {
         treatmentPlanRepository.delete(found);
         log.info("TreatmentPlan with id " + id + " deleted successfully");
     }
+
+    public boolean existsByQuoteId(UUID quoteId) {
+        return treatmentPlanRepository.existsByQuote_Id(quoteId);
+    }
+
 }

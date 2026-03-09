@@ -1,9 +1,10 @@
 package naderdeghaili.capstoneproject.controllers;
 
 
-import naderdeghaili.capstoneproject.entities.TreatedTooth;
 import naderdeghaili.capstoneproject.exceptions.ValidationException;
+import naderdeghaili.capstoneproject.mappers.DTOMapper;
 import naderdeghaili.capstoneproject.payloads.TreatedToothCreateDTO;
+import naderdeghaili.capstoneproject.payloads.TreatedToothResponseDTO;
 import naderdeghaili.capstoneproject.payloads.TreatedToothUpdateDTO;
 import naderdeghaili.capstoneproject.services.TreatedToothService;
 import org.springframework.data.domain.Page;
@@ -21,69 +22,72 @@ import java.util.UUID;
 public class TreatedToothController {
 
     private final TreatedToothService treatedToothService;
+    private final DTOMapper mapper;
 
-    public TreatedToothController(TreatedToothService treatedToothService) {
+    public TreatedToothController(TreatedToothService treatedToothService, DTOMapper mapper) {
         this.treatedToothService = treatedToothService;
+        this.mapper = mapper;
     }
 
+    //GET BY TREATMENT - api/treated-tooth
     @GetMapping("/treatment/{treatmentId}")
-    public Page<TreatedTooth> getByTreatment(@PathVariable UUID treatmentId,
-                                             @RequestParam(defaultValue = "0") int page,
-                                             @RequestParam(defaultValue = "10") int size) {
-        return treatedToothService.findByTreatment(treatmentId, page, size);
+    public Page<TreatedToothResponseDTO> getByTreatment(@PathVariable UUID treatmentId,
+                                                        @RequestParam(defaultValue = "0") int page,
+                                                        @RequestParam(defaultValue = "10") int size) {
+        return this.treatedToothService.findByTreatment(treatmentId, page, size).map(mapper::toTreatedToothDTO);
     }
 
     @GetMapping("/patient/{patientId}")
-    public Page<TreatedTooth> getByPatient(@PathVariable UUID patientId,
-                                           @RequestParam(defaultValue = "0") int page,
-                                           @RequestParam(defaultValue = "10") int size) {
-        return treatedToothService.findByPatient(patientId, page, size);
+    public Page<TreatedToothResponseDTO> getByPatient(@PathVariable UUID patientId,
+                                                      @RequestParam(defaultValue = "0") int page,
+                                                      @RequestParam(defaultValue = "10") int size) {
+        return this.treatedToothService.findByPatient(patientId, page, size).map(mapper::toTreatedToothDTO);
     }
 
     @GetMapping("/tooth/{toothCode}")
-    public Page<TreatedTooth> getByToothCode(@PathVariable Integer toothCode,
-                                             @RequestParam(defaultValue = "0") int page,
-                                             @RequestParam(defaultValue = "10") int size) {
-        return treatedToothService.findByToothCode(toothCode, page, size);
+    public Page<TreatedToothResponseDTO> getByToothCode(@PathVariable Integer toothCode,
+                                                        @RequestParam(defaultValue = "0") int page,
+                                                        @RequestParam(defaultValue = "10") int size) {
+        return this.treatedToothService.findByToothCode(toothCode, page, size).map(mapper::toTreatedToothDTO);
     }
 
     @GetMapping("/tooth/{toothCode}/patient/{patientId}")
-    public Page<TreatedTooth> getByToothCodeAndPatient(@PathVariable Integer toothCode,
-                                                       @PathVariable UUID patientId,
-                                                       @RequestParam(defaultValue = "0") int page,
-                                                       @RequestParam(defaultValue = "10") int size) {
-        return treatedToothService.findByToothCodeAndPatient(toothCode, patientId, page, size);
+    public Page<TreatedToothResponseDTO> getByToothCodeAndPatient(@PathVariable Integer toothCode,
+                                                                  @PathVariable UUID patientId,
+                                                                  @RequestParam(defaultValue = "0") int page,
+                                                                  @RequestParam(defaultValue = "10") int size) {
+        return this.treatedToothService.findByToothCodeAndPatient(toothCode, patientId, page, size).map(mapper::toTreatedToothDTO);
     }
 
     @GetMapping("/{toothId}")
-    public TreatedTooth getById(@PathVariable UUID toothId) {
-        return treatedToothService.findById(toothId);
+    public TreatedToothResponseDTO getById(@PathVariable UUID toothId) {
+        return mapper.toTreatedToothDTO(this.treatedToothService.findById(toothId));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public TreatedTooth create(@RequestBody @Validated TreatedToothCreateDTO payload, BindingResult validation) {
+    public TreatedToothResponseDTO create(@RequestBody @Validated TreatedToothCreateDTO payload, BindingResult validation) {
         if (validation.hasErrors())
             throw new ValidationException(validation.getAllErrors().stream()
                     .map(e -> e.getDefaultMessage()).toList());
 
-        return treatedToothService.saveTreatedTooth(payload);
+        return mapper.toTreatedToothDTO(this.treatedToothService.saveTreatedTooth(payload));
     }
 
     @PutMapping("/{id}")
-    public TreatedTooth update(@PathVariable UUID id,
-                               @RequestBody @Validated TreatedToothUpdateDTO payload, BindingResult validation) {
+    public TreatedToothResponseDTO update(@PathVariable UUID id,
+                                          @RequestBody @Validated TreatedToothUpdateDTO payload, BindingResult validation) {
         if (validation.hasErrors())
             throw new ValidationException(validation.getAllErrors().stream()
                     .map(e -> e.getDefaultMessage()).toList());
 
-        return treatedToothService.findByIdAndUpdate(id, payload);
+        return mapper.toTreatedToothDTO(this.treatedToothService.findByIdAndUpdate(id, payload));
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable UUID id) {
-        treatedToothService.findByIdAndDelete(id);
+        this.treatedToothService.findByIdAndDelete(id);
     }
 
 }

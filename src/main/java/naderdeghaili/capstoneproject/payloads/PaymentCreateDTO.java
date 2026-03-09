@@ -1,10 +1,12 @@
 package naderdeghaili.capstoneproject.payloads;
 
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
-import jakarta.validation.constraints.Positive;
 import naderdeghaili.capstoneproject.entities.PaymentMethod;
+import naderdeghaili.capstoneproject.entities.PaymentStatus;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -14,8 +16,8 @@ public record PaymentCreateDTO(@NotNull(message = "Patient id is required")
                                UUID appointmentId,
 
                                @NotNull(message = "Amount is required")
-                               @Positive(message = "Amount must be positive")
-                               Double amount,
+                               @DecimalMin(value = "0.01", message = "Amount must be greater than 0")
+                               BigDecimal amount,
 
                                @NotNull(message = "Payment date is required")
                                @PastOrPresent(message = "Payment date cannot be in the future")
@@ -24,7 +26,10 @@ public record PaymentCreateDTO(@NotNull(message = "Patient id is required")
                                @NotNull(message = "Payment method is required")
                                PaymentMethod method,
 
-                               String notes
+                               String notes,
+                               
+                               @NotNull
+                               PaymentStatus status
 ) {
 
 }

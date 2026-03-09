@@ -3,6 +3,7 @@ package naderdeghaili.capstoneproject.entities;
 
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
@@ -17,7 +18,7 @@ public class QuoteItem {
     private Integer toothNumber;
 
     @Column(nullable = false)
-    private Double quotedPrice;
+    private BigDecimal quotedPrice;
 
     @ManyToOne
     @JoinColumn(name = "quote_id", nullable = false)
@@ -30,7 +31,7 @@ public class QuoteItem {
     public QuoteItem() {
     }
 
-    public QuoteItem(Integer toothNumber, Double quotedPrice, Quote quote, Procedure procedure) {
+    public QuoteItem(Integer toothNumber, BigDecimal quotedPrice, Quote quote, Procedure procedure) {
         this.toothNumber = toothNumber;
         this.quotedPrice = quotedPrice;
         this.quote = quote;
@@ -49,11 +50,11 @@ public class QuoteItem {
         this.toothNumber = toothNumber;
     }
 
-    public Double getQuotedPrice() {
+    public BigDecimal getQuotedPrice() {
         return quotedPrice;
     }
 
-    public void setQuotedPrice(Double quotedPrice) {
+    public void setQuotedPrice(BigDecimal quotedPrice) {
         this.quotedPrice = quotedPrice;
     }
 
@@ -79,7 +80,7 @@ public class QuoteItem {
                 "id: " + id +
                 " | toothNumber: " + toothNumber +
                 " | quotedPrice: " + quotedPrice +
-                " | quote: " + quote +
-                " | procedure: " + procedure;
+                " | quote: " + (quote != null ? quote.getId() : null) +
+                " | procedure: " + (procedure != null ? procedure.getId() : null);
     }
 }

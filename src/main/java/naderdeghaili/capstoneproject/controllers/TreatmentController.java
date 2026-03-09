@@ -1,8 +1,9 @@
 package naderdeghaili.capstoneproject.controllers;
 
-import naderdeghaili.capstoneproject.entities.Treatment;
 import naderdeghaili.capstoneproject.exceptions.ValidationException;
+import naderdeghaili.capstoneproject.mappers.DTOMapper;
 import naderdeghaili.capstoneproject.payloads.TreatmentCreateDTO;
+import naderdeghaili.capstoneproject.payloads.TreatmentResponseDTO;
 import naderdeghaili.capstoneproject.payloads.TreatmentUpdateDTO;
 import naderdeghaili.capstoneproject.services.TreatmentService;
 import org.springframework.data.domain.Page;
@@ -20,56 +21,58 @@ import java.util.UUID;
 public class TreatmentController {
 
     private final TreatmentService treatmentService;
+    private final DTOMapper mapper;
 
-    public TreatmentController(TreatmentService treatmentService) {
+    public TreatmentController(TreatmentService treatmentService, DTOMapper mapper) {
         this.treatmentService = treatmentService;
+        this.mapper = mapper;
     }
 
     //GET ALL - /api/treatments
     @GetMapping
-    public Page<Treatment> getAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-        return this.treatmentService.getAll(page, size);
+    public Page<TreatmentResponseDTO> getAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        return this.treatmentService.getAll(page, size).map(mapper::toTreatmentDTO);
     }
 
 
     //GET BY ID  - /api/treatments/{treatmentId}
     @GetMapping("/{treatmentId}")
-    public Treatment getById(@PathVariable UUID treatmentId) {
+    public TreatmentResponseDTO getById(@PathVariable UUID treatmentId) {
 
-        return this.treatmentService.findById(treatmentId);
+        return mapper.toTreatmentDTO(this.treatmentService.findById(treatmentId));
     }
 
     //GET BY APPOINTMENT - /api/treatments/{appointmentId}
     @GetMapping("/appointment/{appointmentId}")
-    public Page<Treatment> getByAppointment(@PathVariable UUID appointmentId,
-                                            @RequestParam(defaultValue = "0") int page,
-                                            @RequestParam(defaultValue = "10") int size) {
+    public Page<TreatmentResponseDTO> getByAppointment(@PathVariable UUID appointmentId,
+                                                       @RequestParam(defaultValue = "0") int page,
+                                                       @RequestParam(defaultValue = "10") int size) {
 
-        return this.treatmentService.findByAppointment(appointmentId, page, size);
+        return this.treatmentService.findByAppointment(appointmentId, page, size).map(mapper::toTreatmentDTO);
     }
 
     //GET BY PATIENT - /api/treatments/{patientId}
     @GetMapping("/patient/{patientId}")
-    public Page<Treatment> getByPatient(@PathVariable UUID patientId,
-                                        @RequestParam(defaultValue = "0") int page,
-                                        @RequestParam(defaultValue = "10") int size) {
+    public Page<TreatmentResponseDTO> getByPatient(@PathVariable UUID patientId,
+                                                   @RequestParam(defaultValue = "0") int page,
+                                                   @RequestParam(defaultValue = "10") int size) {
 
-        return this.treatmentService.findByAppointment(patientId, page, size);
+        return this.treatmentService.findByPatient(patientId, page, size).map(mapper::toTreatmentDTO);
     }
 
     //GET BY PROCEDURE - /api/treatments/{procedureId}
     @GetMapping("/procedure/{procedureId}")
-    public Page<Treatment> getByProcedure(@PathVariable UUID procedureId,
-                                          @RequestParam(defaultValue = "0") int page,
-                                          @RequestParam(defaultValue = "10") int size) {
+    public Page<TreatmentResponseDTO> getByProcedure(@PathVariable UUID procedureId,
+                                                     @RequestParam(defaultValue = "0") int page,
+                                                     @RequestParam(defaultValue = "10") int size) {
 
-        return this.treatmentService.findByProcedure(procedureId, page, size);
+        return this.treatmentService.findByProcedure(procedureId, page, size).map(mapper::toTreatmentDTO);
     }
 
     //POST - /api/treatments/
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Treatment save(@RequestBody @Validated TreatmentCreateDTO payload, BindingResult validation) {
+    public TreatmentResponseDTO save(@RequestBody @Validated TreatmentCreateDTO payload, BindingResult validation) {
 
         if (validation.hasErrors())
             throw new ValidationException(validation
@@ -78,19 +81,19 @@ public class TreatmentController {
                     .map(e -> e.getDefaultMessage())
                     .toList());
 
-        return this.treatmentService.saveTreatment(payload);
+        return mapper.toTreatmentDTO(this.treatmentService.saveTreatment(payload));
     }
 
     //PUT - /api/treatments/{treatmentId}
     @PutMapping("/{treatmentId}")
-    public Treatment update(@PathVariable UUID treatmentId,
-                            @RequestBody @Validated TreatmentUpdateDTO payload,
-                            BindingResult validation) {
+    public TreatmentResponseDTO update(@PathVariable UUID treatmentId,
+                                       @RequestBody @Validated TreatmentUpdateDTO payload,
+                                       BindingResult validation) {
 
         if (validation.hasErrors())
             throw new ValidationException(validation.getAllErrors().stream().map(e -> e.getDefaultMessage()).toList());
 
-        return this.treatmentService.findByIdAndUpdate(treatmentId, payload);
+        return mapper.toTreatmentDTO(this.treatmentService.findByIdAndUpdate(treatmentId, payload));
     }
 
     //DELETE  - /api/treatments/{treatmentId}

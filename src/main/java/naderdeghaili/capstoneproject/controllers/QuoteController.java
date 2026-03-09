@@ -1,10 +1,11 @@
 package naderdeghaili.capstoneproject.controllers;
 
-import naderdeghaili.capstoneproject.entities.Quote;
 import naderdeghaili.capstoneproject.entities.QuoteStatus;
 import naderdeghaili.capstoneproject.entities.User;
 import naderdeghaili.capstoneproject.exceptions.ValidationException;
+import naderdeghaili.capstoneproject.mappers.DTOMapper;
 import naderdeghaili.capstoneproject.payloads.QuoteCreateDTO;
+import naderdeghaili.capstoneproject.payloads.QuoteResponseDTO;
 import naderdeghaili.capstoneproject.payloads.QuoteUpdateDTO;
 import naderdeghaili.capstoneproject.services.QuoteService;
 import org.springframework.data.domain.Page;
@@ -23,67 +24,71 @@ import java.util.UUID;
 public class QuoteController {
 
     private final QuoteService quoteService;
+    private final DTOMapper mapper;
 
-    public QuoteController(QuoteService quoteService) {
+    public QuoteController(QuoteService quoteService, DTOMapper mapper) {
         this.quoteService = quoteService;
+        this.mapper = mapper;
     }
 
     //GET ALL - api/quotes
     // ADMIN vede tutto, DENTIST solo i propri
     @GetMapping
-    public Page<Quote> getAll(@AuthenticationPrincipal User currentUser,
-                              @RequestParam(defaultValue = "0") int page,
-                              @RequestParam(defaultValue = "10") int size) {
-        return quoteService.getAll(currentUser, page, size);
+    public Page<QuoteResponseDTO> getAll(@AuthenticationPrincipal User currentUser,
+                                         @RequestParam(defaultValue = "0") int page,
+                                         @RequestParam(defaultValue = "10") int size) {
+        return quoteService.getAll(currentUser, page, size).map(mapper::toQuoteDTO);
     }
 
     //GET BY ID - api/quotes/{quoteId}
     @GetMapping("/{quoteId}")
-    public Quote getById(@PathVariable UUID quoteId,
-                         @AuthenticationPrincipal User currentUser) {
-        return quoteService.findById(quoteId, currentUser);
+    public QuoteResponseDTO getById(@PathVariable UUID quoteId,
+                                    @AuthenticationPrincipal User currentUser) {
+        return mapper.toQuoteDTO(this.quoteService.findById(quoteId, currentUser));
     }
 
     //GET BY PATIENT- api/quotes/patient/{patientId}
     @GetMapping("/patient/{patientId}")
-    public Page<Quote> getByPatient(@PathVariable UUID patientId,
-                                    @AuthenticationPrincipal User currentUser,
-                                    @RequestParam(defaultValue = "0") int page,
-                                    @RequestParam(defaultValue = "10") int size) {
-        return quoteService.findByPatient(patientId, currentUser, page, size);
+    public Page<QuoteResponseDTO> getByPatient(@PathVariable UUID patientId,
+                                               @AuthenticationPrincipal User currentUser,
+                                               @RequestParam(defaultValue = "0") int page,
+                                               @RequestParam(defaultValue = "10") int size) {
+        return this.quoteService.findByPatient(patientId, currentUser, page, size).map(mapper::toQuoteDTO);
     }
 
     //GET BY STATUS - api/quotes/status
     @GetMapping("/status")
-    public Page<Quote> getByStatus(@RequestParam QuoteStatus status,
-                                   @AuthenticationPrincipal User currentUser,
-                                   @RequestParam(defaultValue = "0") int page,
-                                   @RequestParam(defaultValue = "10") int size) {
-        return quoteService.findByStatus(status, currentUser, page, size);
+    public Page<QuoteResponseDTO> getByStatus(@RequestParam QuoteStatus status,
+                                              @AuthenticationPrincipal User currentUser,
+                                              @RequestParam(defaultValue = "0") int page,
+                                              @RequestParam(defaultValue = "10") int size) {
+        return this.quoteService.findByStatus(status, currentUser, page, size).map(mapper::toQuoteDTO);
+
     }
 
     //POST api/quotes
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Quote create(@AuthenticationPrincipal User currentUser,
-                        @RequestBody @Validated QuoteCreateDTO payload, BindingResult validation) {
+    public QuoteResponseDTO create(@AuthenticationPrincipal User currentUser,
+                                   @RequestBody @Validated QuoteCreateDTO payload, BindingResult validation) {
         if (validation.hasErrors())
             throw new ValidationException(validation.getAllErrors().stream()
                     .map(e -> e.getDefaultMessage()).toList());
 
-        return quoteService.saveQuote(payload, currentUser);
+        return mapper.toQuoteDTO(this.quoteService.saveQuote(payload, currentUser));
     }
 
     //PUT - api/quotes/{quoteId}
     @PutMapping("/{quoteId}")
-    public Quote update(@PathVariable UUID quoteId,
-                        @AuthenticationPrincipal User currentUser,
-                        @RequestBody @Validated QuoteUpdateDTO payload, BindingResult validation) {
+    public QuoteResponseDTO update(@PathVariable UUID quoteId,
+                                   @AuthenticationPrincipal User currentUser,
+                                   @RequestBody @Validated QuoteUpdateDTO payload, BindingResult validation) {
         if (validation.hasErrors())
             throw new ValidationException(validation.getAllErrors().stream()
                     .map(e -> e.getDefaultMessage()).toList());
 
-        return quoteService.findByIdAndUpdate(quoteId, payload, currentUser);
+        return mapper.toQuoteDTO(this.quoteService.findByIdAndUpdate(quoteId, payload, currentUser));
+
     }
 
     //DELETE - api/quotes/{quoteId}
@@ -91,6 +96,6 @@ public class QuoteController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable UUID quoteId,
                        @AuthenticationPrincipal User currentUser) {
-        quoteService.findByIdAndDelete(quoteId, currentUser);
+        this.quoteService.findByIdAndDelete(quoteId, currentUser);
     }
 }

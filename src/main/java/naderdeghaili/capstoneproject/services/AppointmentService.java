@@ -108,6 +108,10 @@ public class AppointmentService {
         if (treatmentPlan != null)
             treatmentPlan.addAppointment(appointment);
 
+        LocalDateTime end = payload.dateTime().plusMinutes(payload.duration());
+        if (appointmentRepository.existsByUser_IdAndDateTimeBetween(user.getId(), payload.dateTime(), end))
+            throw new IllegalArgumentException("Dentist already has an appointment in this time slot");
+
         log.info("Appointment for patient " + patient.getId() + " saved successfully");
         return appointmentRepository.save(appointment);
     }
@@ -126,8 +130,8 @@ public class AppointmentService {
     }
 
     // UPDATE STATUS
-    public Appointment updateStatus(UUID appointmentId, AppointmentStatus status) {
-        Appointment found = this.findById(appointmentId);
+    public Appointment updateStatus(UUID appointmentId, AppointmentStatus status, User currentUser) {
+        Appointment found = this.findById(appointmentId, currentUser);
         found.setStatus(status);
 
         log.info("Appointment with id " + appointmentId + " status updated to " + status);

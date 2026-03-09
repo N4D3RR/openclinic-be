@@ -47,9 +47,13 @@ public class Quote {
 
         this.status = status;
         this.notes = notes;
-        this.createdAt = LocalDateTime.now();
         this.patient = patient;
         this.dentist = dentist;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
     }
 
     public void addItem(QuoteItem item) {
@@ -124,8 +128,8 @@ public class Quote {
                 " | status: " + status +
                 " | notes: " + notes +
                 " | createdAt: " + createdAt +
-                " | patient: " + patient +
-                " | dentist: " + dentist +
-                " | items: " + items;
+                " | patient: " + (patient != null ? patient.getId() : null) +
+                " | dentist: " + (dentist != null ? dentist.getId() : null) +
+                " | items: " + items.size();
     }
 }

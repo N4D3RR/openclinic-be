@@ -33,7 +33,7 @@ public class QuoteService {
     //GET ALL — ADMIN vede tutto, DENTIST solo i propri
     public Page<Quote> getAll(User currentUser, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        if (currentUser.getRole() == UserType.ADMIN) {
+        if (currentUser.getRole() == UserType.ADMIN || currentUser.getRole() == UserType.SECRETARY) {
             return quoteRepository.findAll(pageable);
         }
         return quoteRepository.findByDentist_Id(currentUser.getId(), pageable);
@@ -114,6 +114,8 @@ public class QuoteService {
             if (payload.status() == QuoteStatus.ACCEPTED && found.getStatus() != QuoteStatus.ACCEPTED) {
                 if (found.getItems().isEmpty())
                     throw new IllegalArgumentException("Cannot accept a quote with no items");
+                if (treatmentPlanService.existsByQuoteId(found.getId()))
+                    throw new IllegalStateException("A TreatmentPlan already exists for this quote");
                 treatmentPlanService.createFromQuote(found);
             }
             found.setStatus(payload.status());

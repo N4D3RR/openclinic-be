@@ -1,8 +1,11 @@
 package naderdeghaili.capstoneproject.payloads;
 
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 public record QuoteItemCreateDTO(
@@ -13,10 +16,12 @@ public record QuoteItemCreateDTO(
         UUID procedureId,
 
         @NotNull(message = "Tooth number is required")
+        @Min(value = 11, message = "Tooth code must be at least 11 (FDI notation)")
+        @Max(value = 48, message = "Tooth code must be at most 48 (FDI notation)")
         Integer toothNumber,
 
         @NotNull(message = "Quoted price is required")
-        @Positive(message = "Quoted price must be positive")
-        Double quotedPrice
+        @DecimalMin(value = "0.01", message = "Amount must be greater than 0")
+        BigDecimal quotedPrice
 ) {
 }
