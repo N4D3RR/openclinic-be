@@ -12,6 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
@@ -80,6 +81,14 @@ public class PatientController {
     @PreAuthorize("hasAnyAuthority('ADMIN', 'SECRETARY')")
     public void delete(@PathVariable UUID id) {
         this.patientService.findByIdAndDelete(id);
+    }
+
+    //PATCH CLOUDINARY
+    @PatchMapping("/{id}/photo")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'SECRETARY')")
+    public PatientResponseDTO uploadPhoto(@PathVariable UUID id,
+                                          @RequestParam("file") MultipartFile file) {
+        return mapper.toPatientDTO(this.patientService.uploadPhoto(id, file));
     }
 
 }
