@@ -4,7 +4,6 @@ package naderdeghaili.capstoneproject.controllers;
 import naderdeghaili.capstoneproject.entities.DocumentType;
 import naderdeghaili.capstoneproject.exceptions.ValidationException;
 import naderdeghaili.capstoneproject.mappers.DTOMapper;
-import naderdeghaili.capstoneproject.payloads.DocumentCreateDTO;
 import naderdeghaili.capstoneproject.payloads.DocumentResponseDTO;
 import naderdeghaili.capstoneproject.payloads.DocumentUpdateDTO;
 import naderdeghaili.capstoneproject.services.DocumentService;
@@ -14,6 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
@@ -71,12 +71,14 @@ public class DocumentController {
     //POST - /api/documents
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public DocumentResponseDTO create(@RequestBody @Validated DocumentCreateDTO payload, BindingResult validation) {
-        if (validation.hasErrors())
-            throw new ValidationException(validation.getAllErrors().stream()
-                    .map(e -> e.getDefaultMessage()).toList());
+    public DocumentResponseDTO create(@RequestParam("file") MultipartFile file,
+                                      @RequestParam("clinicalRecordId") UUID clinicalRecordId,
+                                      @RequestParam("type") DocumentType type,
+                                      @RequestParam(value = "notes", required = false) String notes) {
+        if (file.isEmpty())
+            throw new IllegalArgumentException("File is required");
 
-        return mapper.toDocumentDTO(this.documentService.saveDocument(payload));
+        return mapper.toDocumentDTO(this.documentService.saveDocument(file, clinicalRecordId, type, notes));
     }
 
     //PUT - /api/documents

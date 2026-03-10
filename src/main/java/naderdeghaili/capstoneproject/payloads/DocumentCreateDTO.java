@@ -1,25 +1,19 @@
-package naderdeghaili.capstoneproject.payloads;
+// rimosso perchè per ricavare i dati dal Multipart file uso @RequestParam nel controller
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import naderdeghaili.capstoneproject.entities.DocumentType;
-import org.hibernate.validator.constraints.URL;
-
-import java.util.UUID;
-
-public record DocumentCreateDTO(
-        @NotNull(message = "Clinical record id is required")
-        UUID clinicalRecordId,
-
-        @NotBlank(message = "File name is required")
-        String fileName,
-
-        @NotBlank(message = "File URL is required")
-        @URL
-        String fileUrl,
-
-        @NotNull(message = "Document type is required")
-        DocumentType type,
-
-        String notes) {
-}
+//package naderdeghaili.capstoneproject.payloads;
+//
+//import jakarta.validation.constraints.NotNull;
+//import naderdeghaili.capstoneproject.entities.DocumentType;
+//
+//import java.util.UUID;
+//
+//public record DocumentCreateDTO(
+//        @NotNull(message = "Clinical record id is required")
+//        UUID clinicalRecordId,
+//
+//
+//        @NotNull(message = "Document type is required")
+//        DocumentType type,
+//
+//        String notes) {
+//}

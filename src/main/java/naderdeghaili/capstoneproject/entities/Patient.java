@@ -7,7 +7,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-//TODO: cloudinary per upload foto
 @Entity
 @Table(name = "patients")
 public class Patient {

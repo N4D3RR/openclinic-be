@@ -5,13 +5,13 @@ import naderdeghaili.capstoneproject.entities.ClinicalRecord;
 import naderdeghaili.capstoneproject.entities.Document;
 import naderdeghaili.capstoneproject.entities.DocumentType;
 import naderdeghaili.capstoneproject.exceptions.NotFoundException;
-import naderdeghaili.capstoneproject.payloads.DocumentCreateDTO;
 import naderdeghaili.capstoneproject.payloads.DocumentUpdateDTO;
 import naderdeghaili.capstoneproject.repositories.DocumentRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
@@ -21,10 +21,12 @@ public class DocumentService {
 
     private final DocumentRepository documentRepository;
     private final ClinicalRecordService clinicalRecordService;
+    private final CloudinaryService cloudinaryService;
 
-    public DocumentService(DocumentRepository documentRepository, ClinicalRecordService clinicalRecordService) {
+    public DocumentService(DocumentRepository documentRepository, ClinicalRecordService clinicalRecordService, CloudinaryService cloudinaryService) {
         this.documentRepository = documentRepository;
         this.clinicalRecordService = clinicalRecordService;
+        this.cloudinaryService = cloudinaryService;
     }
 
     //GET ALL
@@ -58,20 +60,24 @@ public class DocumentService {
     }
 
     //SAVE
-    public Document saveDocument(DocumentCreateDTO payload) {
-        ClinicalRecord clinicalRecord = clinicalRecordService.findById(payload.clinicalRecordId());
+    public Document saveDocument(MultipartFile file, UUID clinicalRecordId, DocumentType type, String notes) {
+
+        ClinicalRecord clinicalRecord = clinicalRecordService.findById(clinicalRecordId);
+
+        String fileUrl = cloudinaryService.upload(file);
+        String fileName = file.getOriginalFilename();
 
         Document document = new Document(
-                payload.fileName(),
-                payload.fileUrl(),
-                payload.type(),
-                payload.notes(),
+                fileName,
+                fileUrl,
+                type,
+                notes,
                 clinicalRecord
         );
 
         clinicalRecord.addDocument(document);
 
-        log.info("Document '" + payload.fileName() + "' added to clinical record " + clinicalRecord.getId());
+        log.info("Document '" + fileName + "' added to clinical record " + clinicalRecord.getId());
         return documentRepository.save(document);
     }
 
