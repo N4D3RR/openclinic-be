@@ -38,6 +38,7 @@ public class DTOMapper {
                 p.getPhone(),
                 p.getAddress(),
                 p.getPhotoUrl(),
+                p.isEmailConsent(),
                 p.getCreatedAt()
         );
     }

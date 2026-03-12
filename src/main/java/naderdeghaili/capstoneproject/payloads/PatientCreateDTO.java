@@ -28,6 +28,8 @@ public record PatientCreateDTO(
         @NotBlank(message = "Phone is required")
         String phone,
 
-        String address
+        String address,
+
+        Boolean emailConsent
 ) {
 }

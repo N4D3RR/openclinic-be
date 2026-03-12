@@ -9,6 +9,7 @@ import naderdeghaili.capstoneproject.payloads.DocumentUpdateDTO;
 import naderdeghaili.capstoneproject.services.DocumentService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -69,7 +70,7 @@ public class DocumentController {
     }
 
     //POST - /api/documents
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)//per swagger
     @ResponseStatus(HttpStatus.CREATED)
     public DocumentResponseDTO create(@RequestParam("file") MultipartFile file,
                                       @RequestParam("clinicalRecordId") UUID clinicalRecordId,

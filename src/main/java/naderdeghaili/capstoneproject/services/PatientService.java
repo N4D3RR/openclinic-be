@@ -61,6 +61,8 @@ public class PatientService {
                 payload.address()
         );
 
+        patient.setEmailConsent(payload.emailConsent());
+
         log.info("Patient " + payload.fiscalCode() + " saved successfully");
         return patientRepository.save(patient);
     }
@@ -84,6 +86,7 @@ public class PatientService {
         if (payload.email() != null) found.setEmail(payload.email());
         if (payload.phone() != null) found.setPhone(payload.phone());
         if (payload.address() != null) found.setAddress(payload.address());
+        if (payload.emailConsent() != null) found.setEmailConsent(payload.emailConsent());
 
         log.info("Patient with id " + id + " updated successfully");
         return patientRepository.save(found);

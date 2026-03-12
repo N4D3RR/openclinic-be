@@ -22,5 +22,6 @@ public record PatientUpdateDTO(@Size(min = 2, max = 50, message = "First name mu
                                String email,
 
                                String phone,
-                               String address) {
+                               String address,
+                               Boolean emailConsent) {
 }

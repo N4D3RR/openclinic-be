@@ -38,6 +38,9 @@ public class Patient {
     @Column(nullable = true)
     private String address;
 
+    @Column(nullable = false)
+    private Boolean emailConsent;
+
     private String photoUrl;
     private LocalDateTime createdAt;
 
@@ -52,6 +55,7 @@ public class Patient {
         this.email = email;
         this.phone = phone;
         this.address = address;
+        this.emailConsent = false;
     }
 
     @PrePersist
@@ -135,6 +139,14 @@ public class Patient {
         this.createdAt = createdAt;
     }
 
+    public Boolean isEmailConsent() {
+        return emailConsent;
+    }
+
+    public void setEmailConsent(Boolean emailConsent) {
+        this.emailConsent = emailConsent;
+    }
+
     @Override
     public String toString() {
         return "Patient: " +
@@ -146,6 +158,8 @@ public class Patient {
                 " | email: " + email +
                 " | phone: " + phone +
                 " | address: " + address +
-                " | photoUrl: " + photoUrl;
+                " | photoUrl: " + photoUrl +
+                " | emailConsent: " + emailConsent
+                ;
     }
 }

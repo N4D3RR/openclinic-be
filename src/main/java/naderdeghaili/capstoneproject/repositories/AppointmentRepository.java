@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 public interface AppointmentRepository extends JpaRepository<Appointment, UUID> {
@@ -25,6 +26,8 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
     Page<Appointment> findByPatient_IdAndUser_Id(UUID id, UUID id1, Pageable pageable);
 
     boolean existsByUser_IdAndDateTimeBetween(UUID id, LocalDateTime dateTimeStart, LocalDateTime dateTimeEnd);
+
+    List<Appointment> findByDateTimeBetweenAndStatus(LocalDateTime dateTimeStart, LocalDateTime dateTimeEnd, AppointmentStatus status);
 
 
 }

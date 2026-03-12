@@ -14,6 +14,7 @@ public record PatientResponseDTO(
         String phone,
         String address,
         String photoUrl,
+        Boolean emailConsent,
         LocalDateTime createdAt
 ) {
 }
