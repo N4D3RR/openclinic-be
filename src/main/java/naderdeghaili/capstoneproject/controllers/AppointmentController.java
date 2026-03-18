@@ -3,14 +3,13 @@ package naderdeghaili.capstoneproject.controllers;
 import naderdeghaili.capstoneproject.entities.User;
 import naderdeghaili.capstoneproject.exceptions.ValidationException;
 import naderdeghaili.capstoneproject.mappers.DTOMapper;
-import naderdeghaili.capstoneproject.payloads.AppointmentCreateDTO;
-import naderdeghaili.capstoneproject.payloads.AppointmentResponseDTO;
-import naderdeghaili.capstoneproject.payloads.AppointmentUpdateDTO;
+import naderdeghaili.capstoneproject.payloads.create.AppointmentCreateDTO;
+import naderdeghaili.capstoneproject.payloads.responses.AppointmentResponseDTO;
+import naderdeghaili.capstoneproject.payloads.update.AppointmentUpdateDTO;
 import naderdeghaili.capstoneproject.services.AppointmentService;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -35,7 +34,6 @@ public class AppointmentController {
     //
     //GET ALL /api/appointments
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'SECRETARY')")
     public Page<AppointmentResponseDTO> getAll(@AuthenticationPrincipal User currentUser,
                                                @RequestParam(defaultValue = "0") int page,
                                                @RequestParam(defaultValue = "10") int size) {

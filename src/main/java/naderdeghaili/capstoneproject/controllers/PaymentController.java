@@ -3,9 +3,9 @@ package naderdeghaili.capstoneproject.controllers;
 import naderdeghaili.capstoneproject.entities.PaymentStatus;
 import naderdeghaili.capstoneproject.exceptions.ValidationException;
 import naderdeghaili.capstoneproject.mappers.DTOMapper;
-import naderdeghaili.capstoneproject.payloads.PaymentCreateDTO;
-import naderdeghaili.capstoneproject.payloads.PaymentResponseDTO;
-import naderdeghaili.capstoneproject.payloads.PaymentUpdateDTO;
+import naderdeghaili.capstoneproject.payloads.create.PaymentCreateDTO;
+import naderdeghaili.capstoneproject.payloads.responses.PaymentResponseDTO;
+import naderdeghaili.capstoneproject.payloads.update.PaymentUpdateDTO;
 import naderdeghaili.capstoneproject.services.PaymentService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -19,7 +19,6 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/payments")
-@PreAuthorize("hasAnyAuthority('ADMIN', 'SECRETARY')")
 public class PaymentController {
 
     private final PaymentService paymentService;
@@ -76,6 +75,7 @@ public class PaymentController {
     //POST /api/payments
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'SECRETARY')")
     public PaymentResponseDTO create(@RequestBody @Validated PaymentCreateDTO payload, BindingResult validation) {
         if (validation.hasErrors())
             throw new ValidationException(validation.getAllErrors().stream()
@@ -86,6 +86,7 @@ public class PaymentController {
 
     //PUT /api/payments/{paymentId}
     @PutMapping("/{paymentId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public PaymentResponseDTO update(@PathVariable UUID paymentId,
                                      @RequestBody @Validated PaymentUpdateDTO payload, BindingResult validation) {
         if (validation.hasErrors())

@@ -1,7 +1,7 @@
 package naderdeghaili.capstoneproject.exceptions;
 
-import naderdeghaili.capstoneproject.payloads.ErrorsDTO;
-import naderdeghaili.capstoneproject.payloads.ErrorsWithListDTO;
+import naderdeghaili.capstoneproject.payloads.errors.ErrorsDTO;
+import naderdeghaili.capstoneproject.payloads.errors.ErrorsWithListDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authorization.AuthorizationDeniedException;

@@ -3,9 +3,9 @@ package naderdeghaili.capstoneproject.controllers;
 import naderdeghaili.capstoneproject.entities.User;
 import naderdeghaili.capstoneproject.exceptions.ValidationException;
 import naderdeghaili.capstoneproject.mappers.DTOMapper;
-import naderdeghaili.capstoneproject.payloads.QuoteItemCreateDTO;
-import naderdeghaili.capstoneproject.payloads.QuoteItemResponseDTO;
-import naderdeghaili.capstoneproject.payloads.QuoteItemUpdateDTO;
+import naderdeghaili.capstoneproject.payloads.create.QuoteItemCreateDTO;
+import naderdeghaili.capstoneproject.payloads.responses.QuoteItemResponseDTO;
+import naderdeghaili.capstoneproject.payloads.update.QuoteItemUpdateDTO;
 import naderdeghaili.capstoneproject.services.QuoteItemService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -19,7 +19,6 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/quote-items")
-@PreAuthorize("hasAnyAuthority('ADMIN', 'DENTIST')")
 public class QuoteItemController {
 
     private final QuoteItemService quoteItemService;
@@ -59,6 +58,7 @@ public class QuoteItemController {
     //POST - api/quote-items
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'DENTIST')")
     public QuoteItemResponseDTO save(@AuthenticationPrincipal User currentUser,
                                      @RequestBody @Validated QuoteItemCreateDTO payload, BindingResult validation) {
 
@@ -70,6 +70,7 @@ public class QuoteItemController {
 
     //PUT - api/quote-items/{quoteItemId}
     @PutMapping("/{quoteItemId}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'DENTIST')")
     public QuoteItemResponseDTO update(@PathVariable UUID quoteItemId,
                                        @AuthenticationPrincipal User currentUser,
                                        @RequestBody @Validated QuoteItemUpdateDTO payload,
@@ -84,6 +85,7 @@ public class QuoteItemController {
     //DELETE - api/quote-items/{quoteItemId}
     @DeleteMapping("/{quoteItemId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'DENTIST')")
     public void delete(@PathVariable UUID quoteItemId,
                        @AuthenticationPrincipal User currentUser) {
 

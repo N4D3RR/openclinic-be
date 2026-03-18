@@ -4,9 +4,9 @@ import naderdeghaili.capstoneproject.entities.QuoteStatus;
 import naderdeghaili.capstoneproject.entities.User;
 import naderdeghaili.capstoneproject.exceptions.ValidationException;
 import naderdeghaili.capstoneproject.mappers.DTOMapper;
-import naderdeghaili.capstoneproject.payloads.QuoteCreateDTO;
-import naderdeghaili.capstoneproject.payloads.QuoteResponseDTO;
-import naderdeghaili.capstoneproject.payloads.QuoteUpdateDTO;
+import naderdeghaili.capstoneproject.payloads.create.QuoteCreateDTO;
+import naderdeghaili.capstoneproject.payloads.responses.QuoteResponseDTO;
+import naderdeghaili.capstoneproject.payloads.update.QuoteUpdateDTO;
 import naderdeghaili.capstoneproject.services.QuoteService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -20,7 +20,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/quotes")
-@PreAuthorize("hasAnyAuthority('ADMIN', 'DENTIST')")
+
 public class QuoteController {
 
     private final QuoteService quoteService;
@@ -69,6 +69,7 @@ public class QuoteController {
     //POST api/quotes
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'DENTIST')")
     public QuoteResponseDTO create(@AuthenticationPrincipal User currentUser,
                                    @RequestBody @Validated QuoteCreateDTO payload, BindingResult validation) {
         if (validation.hasErrors())
@@ -80,6 +81,7 @@ public class QuoteController {
 
     //PUT - api/quotes/{quoteId}
     @PutMapping("/{quoteId}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'DENTIST')")
     public QuoteResponseDTO update(@PathVariable UUID quoteId,
                                    @AuthenticationPrincipal User currentUser,
                                    @RequestBody @Validated QuoteUpdateDTO payload, BindingResult validation) {
@@ -94,6 +96,7 @@ public class QuoteController {
     //DELETE - api/quotes/{quoteId}
     @DeleteMapping("/{quoteId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'DENTIST')")
     public void delete(@PathVariable UUID quoteId,
                        @AuthenticationPrincipal User currentUser) {
         this.quoteService.findByIdAndDelete(quoteId, currentUser);

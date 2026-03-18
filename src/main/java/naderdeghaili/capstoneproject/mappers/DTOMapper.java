@@ -1,7 +1,7 @@
 package naderdeghaili.capstoneproject.mappers;
 
 import naderdeghaili.capstoneproject.entities.*;
-import naderdeghaili.capstoneproject.payloads.*;
+import naderdeghaili.capstoneproject.payloads.responses.*;
 import org.springframework.stereotype.Component;
 
 /*

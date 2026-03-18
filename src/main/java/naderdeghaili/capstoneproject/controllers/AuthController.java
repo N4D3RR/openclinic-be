@@ -2,8 +2,8 @@ package naderdeghaili.capstoneproject.controllers;
 
 import naderdeghaili.capstoneproject.exceptions.ValidationException;
 import naderdeghaili.capstoneproject.mappers.DTOMapper;
-import naderdeghaili.capstoneproject.payloads.LoginDTO;
-import naderdeghaili.capstoneproject.payloads.LoginResDTO;
+import naderdeghaili.capstoneproject.payloads.login.LoginDTO;
+import naderdeghaili.capstoneproject.payloads.login.LoginResDTO;
 import naderdeghaili.capstoneproject.services.AuthService;
 import naderdeghaili.capstoneproject.services.UserService;
 import org.springframework.validation.BindingResult;

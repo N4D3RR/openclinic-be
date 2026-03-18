@@ -2,9 +2,9 @@ package naderdeghaili.capstoneproject.controllers;
 
 import naderdeghaili.capstoneproject.exceptions.ValidationException;
 import naderdeghaili.capstoneproject.mappers.DTOMapper;
-import naderdeghaili.capstoneproject.payloads.PatientCreateDTO;
-import naderdeghaili.capstoneproject.payloads.PatientResponseDTO;
-import naderdeghaili.capstoneproject.payloads.PatientUpdateDTO;
+import naderdeghaili.capstoneproject.payloads.create.PatientCreateDTO;
+import naderdeghaili.capstoneproject.payloads.responses.PatientResponseDTO;
+import naderdeghaili.capstoneproject.payloads.update.PatientUpdateDTO;
 import naderdeghaili.capstoneproject.services.PatientService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -30,7 +30,7 @@ public class PatientController {
 
     //GET ALL /api/patients
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'SECRETARY')")
+
     public Page<PatientResponseDTO> getAll(@RequestParam(defaultValue = "0") int page,
                                            @RequestParam(defaultValue = "10") int size) {
         return this.patientService.getAll(page, size).map(mapper::toPatientDTO);
@@ -44,7 +44,6 @@ public class PatientController {
 
     // GET BY LASTNAME /api/patients/search?lastName=
     @GetMapping("/search")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'SECRETARY')")
     public Page<PatientResponseDTO> searchByLastName(@RequestParam String lastName,
                                                      @RequestParam(defaultValue = "0") int page,
                                                      @RequestParam(defaultValue = "10") int size) {

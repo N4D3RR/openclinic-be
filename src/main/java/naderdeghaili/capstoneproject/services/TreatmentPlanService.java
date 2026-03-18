@@ -3,7 +3,7 @@ package naderdeghaili.capstoneproject.services;
 import lombok.extern.slf4j.Slf4j;
 import naderdeghaili.capstoneproject.entities.*;
 import naderdeghaili.capstoneproject.exceptions.NotFoundException;
-import naderdeghaili.capstoneproject.payloads.TreatmentPlanUpdateDTO;
+import naderdeghaili.capstoneproject.payloads.update.TreatmentPlanUpdateDTO;
 import naderdeghaili.capstoneproject.repositories.TreatmentPlanRepository;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;

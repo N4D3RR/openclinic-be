@@ -3,9 +3,9 @@ package naderdeghaili.capstoneproject.controllers;
 
 import naderdeghaili.capstoneproject.exceptions.ValidationException;
 import naderdeghaili.capstoneproject.mappers.DTOMapper;
-import naderdeghaili.capstoneproject.payloads.TreatedToothCreateDTO;
-import naderdeghaili.capstoneproject.payloads.TreatedToothResponseDTO;
-import naderdeghaili.capstoneproject.payloads.TreatedToothUpdateDTO;
+import naderdeghaili.capstoneproject.payloads.create.TreatedToothCreateDTO;
+import naderdeghaili.capstoneproject.payloads.responses.TreatedToothResponseDTO;
+import naderdeghaili.capstoneproject.payloads.update.TreatedToothUpdateDTO;
 import naderdeghaili.capstoneproject.services.TreatedToothService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;

@@ -2,9 +2,9 @@ package naderdeghaili.capstoneproject.controllers;
 
 import naderdeghaili.capstoneproject.exceptions.ValidationException;
 import naderdeghaili.capstoneproject.mappers.DTOMapper;
-import naderdeghaili.capstoneproject.payloads.ClinicalRecordCreateDTO;
-import naderdeghaili.capstoneproject.payloads.ClinicalRecordResponseDTO;
-import naderdeghaili.capstoneproject.payloads.ClinicalRecordUpdateDTO;
+import naderdeghaili.capstoneproject.payloads.create.ClinicalRecordCreateDTO;
+import naderdeghaili.capstoneproject.payloads.responses.ClinicalRecordResponseDTO;
+import naderdeghaili.capstoneproject.payloads.update.ClinicalRecordUpdateDTO;
 import naderdeghaili.capstoneproject.services.ClinicalRecordService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;

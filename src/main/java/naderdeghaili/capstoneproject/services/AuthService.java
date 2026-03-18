@@ -2,7 +2,7 @@ package naderdeghaili.capstoneproject.services;
 
 import naderdeghaili.capstoneproject.entities.User;
 import naderdeghaili.capstoneproject.exceptions.UnauthorizedException;
-import naderdeghaili.capstoneproject.payloads.LoginDTO;
+import naderdeghaili.capstoneproject.payloads.login.LoginDTO;
 import naderdeghaili.capstoneproject.security.JWTTools;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

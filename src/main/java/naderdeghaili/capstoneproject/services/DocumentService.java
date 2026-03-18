@@ -5,7 +5,7 @@ import naderdeghaili.capstoneproject.entities.ClinicalRecord;
 import naderdeghaili.capstoneproject.entities.Document;
 import naderdeghaili.capstoneproject.entities.DocumentType;
 import naderdeghaili.capstoneproject.exceptions.NotFoundException;
-import naderdeghaili.capstoneproject.payloads.DocumentUpdateDTO;
+import naderdeghaili.capstoneproject.payloads.update.DocumentUpdateDTO;
 import naderdeghaili.capstoneproject.repositories.DocumentRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

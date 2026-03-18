@@ -2,9 +2,9 @@ package naderdeghaili.capstoneproject.controllers;
 
 import naderdeghaili.capstoneproject.exceptions.ValidationException;
 import naderdeghaili.capstoneproject.mappers.DTOMapper;
-import naderdeghaili.capstoneproject.payloads.TreatmentCreateDTO;
-import naderdeghaili.capstoneproject.payloads.TreatmentResponseDTO;
-import naderdeghaili.capstoneproject.payloads.TreatmentUpdateDTO;
+import naderdeghaili.capstoneproject.payloads.create.TreatmentCreateDTO;
+import naderdeghaili.capstoneproject.payloads.responses.TreatmentResponseDTO;
+import naderdeghaili.capstoneproject.payloads.update.TreatmentUpdateDTO;
 import naderdeghaili.capstoneproject.services.TreatmentService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
