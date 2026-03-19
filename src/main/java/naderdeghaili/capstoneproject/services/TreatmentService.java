@@ -50,6 +50,7 @@ public class TreatmentService {
     }
 
     //GET BY PATIENT
+    //TODO: trattamenti senza appuntamento non compaiono qui, fix
     public Page<Treatment> findByPatient(UUID patientId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return treatmentRepository.findByAppointment_Patient_Id(patientId, pageable);
@@ -63,7 +64,13 @@ public class TreatmentService {
 
     //SAVE
     public Treatment saveTreatment(TreatmentCreateDTO payload) {
-        Appointment appointment = appointmentService.findById(payload.appointmentId());
+        Appointment appointment = null;
+        if (payload.appointmentId() != null) {
+
+            appointment = appointmentService.findById(payload.appointmentId());
+
+        }
+
         Procedure procedure = procedureService.findById(payload.procedureId());
 
         Treatment treatment = new Treatment(
@@ -74,10 +81,11 @@ public class TreatmentService {
                 payload.imageUrl(),
                 payload.date()
         );
+        if (appointment != null) {
+            appointment.addTreatment(treatment);
+        }
 
-        appointment.addTreatment(treatment);
-
-        log.info("Treatment saved for appointment " + appointment.getId());
+        log.info("Treatment saved " + (appointment != null ? " for appointment " + appointment.getId() : "without appointment"));
         return treatmentRepository.save(treatment);
     }
 

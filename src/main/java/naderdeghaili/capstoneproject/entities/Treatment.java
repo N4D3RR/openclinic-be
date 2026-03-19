@@ -17,7 +17,7 @@ public class Treatment {
     private UUID id;
 
     @ManyToOne
-    @JoinColumn(name = "appointment_id", nullable = false)
+    @JoinColumn(name = "appointment_id")
     private Appointment appointment;
 
     @ManyToOne
@@ -56,10 +56,9 @@ public class Treatment {
     }
 
     public User getUser() {
-        return this.appointment.getUser();
+        return this.appointment != null ? appointment.getUser() : null;
     }
-
-
+    
     public UUID getId() {
         return id;
     }
