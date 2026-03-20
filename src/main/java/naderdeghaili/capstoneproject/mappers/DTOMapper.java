@@ -118,10 +118,10 @@ public class DTOMapper {
                 t.getCost(),
                 t.getNotes(),
                 t.getImageUrl(),
-
                 toProcedureDTO(t.getProcedure()),
                 t.getTreatedToothList().stream().map(this::toTreatedToothDTO).toList(),
-                t.getAppointment() != null ? t.getAppointment().getId() : null
+                t.getAppointment() != null ? t.getAppointment().getId() : null,
+                t.getPatient() != null ? t.getPatient().getId() : null
         );
     }
 

@@ -122,6 +122,14 @@ public class Treatment {
         return treatedToothList;
     }
 
+    public Patient getPatient() {
+        return patient;
+    }
+
+    public void setPatient(Patient patient) {
+        this.patient = patient;
+    }
+
     @Override
     public String toString() {
         return "Treatment: " +
