@@ -9,7 +9,9 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 public record TreatmentCreateDTO(
+        
         UUID appointmentId,
+        UUID patientId,
 
         @NotNull(message = "Procedure id is required")
         UUID procedureId,

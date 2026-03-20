@@ -12,5 +12,6 @@ public record TreatmentResponseDTO(UUID id,
                                    String imageUrl,
                                    ProcedureResponseDTO procedure,
                                    List<TreatedToothResponseDTO> treatedToothList,
-                                   UUID appointmentId) {
+                                   UUID appointmentId,
+                                   UUID patientId) {
 }

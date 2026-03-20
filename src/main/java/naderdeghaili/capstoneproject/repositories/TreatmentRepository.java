@@ -17,4 +17,7 @@ public interface TreatmentRepository extends JpaRepository<Treatment, UUID> {
 
     Page<Treatment> findByProcedure_Id(UUID id, Pageable pageable);
 
+    Page<Treatment> findByPatient_Id(UUID id, Pageable pageable);
+
+
 }

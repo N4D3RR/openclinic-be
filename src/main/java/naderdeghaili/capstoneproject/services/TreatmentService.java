@@ -3,6 +3,7 @@ package naderdeghaili.capstoneproject.services;
 
 import lombok.extern.slf4j.Slf4j;
 import naderdeghaili.capstoneproject.entities.Appointment;
+import naderdeghaili.capstoneproject.entities.Patient;
 import naderdeghaili.capstoneproject.entities.Procedure;
 import naderdeghaili.capstoneproject.entities.Treatment;
 import naderdeghaili.capstoneproject.exceptions.NotFoundException;
@@ -23,12 +24,14 @@ public class TreatmentService {
     private final TreatmentRepository treatmentRepository;
     private final AppointmentService appointmentService;
     private final ProcedureService procedureService;
+    private final PatientService patientService;
 
 
-    public TreatmentService(TreatmentRepository treatmentRepository, AppointmentService appointmentService, ProcedureService procedureService) {
+    public TreatmentService(TreatmentRepository treatmentRepository, AppointmentService appointmentService, ProcedureService procedureService, PatientService patientService) {
         this.treatmentRepository = treatmentRepository;
         this.appointmentService = appointmentService;
         this.procedureService = procedureService;
+        this.patientService = patientService;
     }
 
     //GET ALL
@@ -50,10 +53,10 @@ public class TreatmentService {
     }
 
     //GET BY PATIENT
-    //TODO: trattamenti senza appuntamento non compaiono qui, fix
+
     public Page<Treatment> findByPatient(UUID patientId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return treatmentRepository.findByAppointment_Patient_Id(patientId, pageable);
+        return treatmentRepository.findByPatient_Id(patientId, pageable);
     }
 
     //GET BY PROCEDURE
@@ -64,10 +67,14 @@ public class TreatmentService {
 
     //SAVE
     public Treatment saveTreatment(TreatmentCreateDTO payload) {
+
+        Patient patient = patientService.findById(payload.patientId());
+
         Appointment appointment = null;
         if (payload.appointmentId() != null) {
 
             appointment = appointmentService.findById(payload.appointmentId());
+            patient = appointment.getPatient();
 
         }
 
@@ -75,6 +82,7 @@ public class TreatmentService {
 
         Treatment treatment = new Treatment(
                 appointment,
+                patient,
                 procedure,
                 payload.cost(),
                 payload.notes(),

@@ -21,6 +21,11 @@ public class Treatment {
     private Appointment appointment;
 
     @ManyToOne
+    @JoinColumn(name = "patient_id")
+    private Patient patient;
+
+
+    @ManyToOne
     @JoinColumn(name = "procedure_id", nullable = false)
     private Procedure procedure;
 
@@ -40,8 +45,9 @@ public class Treatment {
     }
 
 
-    public Treatment(Appointment appointment, Procedure procedure, BigDecimal cost, String notes, String imageUrl, LocalDate date) {
+    public Treatment(Appointment appointment, Patient patient, Procedure procedure, BigDecimal cost, String notes, String imageUrl, LocalDate date) {
         this.appointment = appointment;
+        this.patient = patient;
         this.procedure = procedure;
         this.cost = cost;
         this.notes = notes;
@@ -58,7 +64,7 @@ public class Treatment {
     public User getUser() {
         return this.appointment != null ? appointment.getUser() : null;
     }
-    
+
     public UUID getId() {
         return id;
     }
