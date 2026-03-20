@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Service
@@ -57,13 +58,22 @@ public class TreatmentPlanService {
                 .map(QuoteItem::getQuotedPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
+        //durata dell trattamento
+        int totalMinutes = quote.getItems().stream()
+                .mapToInt(item -> item.getProcedure().getDurationInMinutes())
+                .sum();
+        
+        //calcolo data di fine come 1 settimana per ogni 60min di trattamenti, minimo 1 settimana
+        LocalDate expectedEndDate = LocalDate.now().plusWeeks(Math.max(1, totalMinutes / 60));
+
         TreatmentPlan plan = new TreatmentPlan(
                 quote,
                 TreatmentPlanStatus.IN_PROGRESS,
-                null,
+                expectedEndDate,
                 null,
                 totalAmount
         );
+        plan.setStartDate(LocalDate.now());
 
         log.info("TreatmentPlan created for quote " + quote.getId());
         return treatmentPlanRepository.save(plan);
