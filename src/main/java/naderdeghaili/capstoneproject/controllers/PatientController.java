@@ -90,4 +90,14 @@ public class PatientController {
         return mapper.toPatientDTO(this.patientService.uploadPhoto(id, file));
     }
 
+    //GLOBAL SEARCH
+    @GetMapping("/global-search")
+    public Page<PatientResponseDTO> globalSearch(
+            @RequestParam String q,
+            @RequestParam(defaultValue = "5") int size
+    ) {
+        return patientService.globalSearch(q, size)
+                .map(mapper::toPatientDTO);
+    }
+
 }

@@ -109,4 +109,8 @@ public class PatientService {
         log.info("Photo uploaded for patient: " + found.getId());
         return patientRepository.save(found);
     }
+
+    public Page<Patient> globalSearch(String q, int size) {
+        return patientRepository.globalSearch(q, PageRequest.of(0, size));
+    }
 }
