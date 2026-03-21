@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+//TODO: aggiungere tipologia prestazione (conservativa, endo, parodontologia, etc)
 @Entity
 @Table(name = "procedures")
 public class Procedure {

@@ -14,7 +14,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -102,5 +104,26 @@ public class PaymentController {
     @PreAuthorize("hasAuthority('ADMIN')")
     public void delete(@PathVariable UUID paymentId) {
         this.paymentService.findByIdAndDelete(paymentId);
+    }
+
+    // GET BY DATE RANGE /api/payments/date-range
+
+    @GetMapping("/date-range")
+    public Page<PaymentResponseDTO> getByDateRange(
+            @RequestParam LocalDate from,
+            @RequestParam LocalDate to,
+            @RequestParam(required = false) PaymentStatus status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        if (status != null)
+            return paymentService.findByDateRangeAndStatus(from, to, status, page, size).map(mapper::toPaymentDTO);
+        return paymentService.findByDateRange(from, to, page, size).map(mapper::toPaymentDTO);
+    }
+
+    // GET KPI /api/payments/kpi
+    @GetMapping("/kpi")
+    public Map<String, Object> getKpi() {
+        return paymentService.getKpi();
     }
 }

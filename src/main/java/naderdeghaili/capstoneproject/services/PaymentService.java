@@ -7,6 +7,7 @@ import naderdeghaili.capstoneproject.entities.Payment;
 import naderdeghaili.capstoneproject.entities.PaymentStatus;
 import naderdeghaili.capstoneproject.exceptions.NotFoundException;
 import naderdeghaili.capstoneproject.payloads.create.PaymentCreateDTO;
+import naderdeghaili.capstoneproject.payloads.responses.MonthlyRevenueResponseDTO;
 import naderdeghaili.capstoneproject.payloads.update.PaymentUpdateDTO;
 import naderdeghaili.capstoneproject.repositories.PaymentRepository;
 import org.springframework.data.domain.Page;
@@ -14,7 +15,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -108,5 +113,45 @@ public class PaymentService {
         Payment found = this.findById(id);
         paymentRepository.delete(found);
         log.info("Payment with id " + id + " deleted successfully");
+    }
+
+    //GET BY PERIOD
+    public Page<Payment> findByDateRange(LocalDate from, LocalDate to, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return paymentRepository.findByPaymentDateBetween(from, to, pageable);
+    }
+
+    //GET BY PERIOD AND STATUS
+    public Page<Payment> findByDateRangeAndStatus(LocalDate from, LocalDate to, PaymentStatus status, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return paymentRepository.findByPaymentDateBetweenAndStatus(from, to, status, pageable);
+    }
+
+    //KPI
+    public Map<String, Object> getKpi() {
+        LocalDate now = LocalDate.now();
+        LocalDate prev = now.minusMonths(1);
+
+        List<MonthlyRevenueResponseDTO> monthly = paymentRepository.monthlyRevenue()
+                .stream()
+                .map(row -> new MonthlyRevenueResponseDTO(
+                        ((Number) row[0]).intValue(),
+                        ((Number) row[1]).intValue(),
+                        (BigDecimal) row[2]
+                ))
+                .toList();
+
+        Map<String, Object> kpi = new HashMap<>();
+        kpi.put("totalPaid", paymentRepository.sumByStatus(PaymentStatus.PAID));
+        kpi.put("totalPending", paymentRepository.sumByStatus(PaymentStatus.PENDING));
+        kpi.put("totalPartial", paymentRepository.sumByStatus(PaymentStatus.PARTIAL));
+        kpi.put("paidCount", paymentRepository.countByStatus(PaymentStatus.PAID));
+        kpi.put("pendingCount", paymentRepository.countByStatus(PaymentStatus.PENDING));
+        kpi.put("partialCount", paymentRepository.countByStatus(PaymentStatus.PARTIAL));
+        kpi.put("currentMonth", paymentRepository.revenueByYearMonth(PaymentStatus.PAID, now.getYear(), now.getMonthValue()));
+        kpi.put("previousMonth", paymentRepository.revenueByYearMonth(PaymentStatus.PAID, prev.getYear(), prev.getMonthValue()));
+        kpi.put("monthlyRevenue", monthly);
+
+        return kpi;
     }
 }
