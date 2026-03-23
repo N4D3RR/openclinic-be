@@ -62,7 +62,7 @@ public class TreatmentPlanService {
         int totalMinutes = quote.getItems().stream()
                 .mapToInt(item -> item.getProcedure().getDurationInMinutes())
                 .sum();
-        
+
         //calcolo data di fine come 1 settimana per ogni 60min di trattamenti, minimo 1 settimana
         LocalDate expectedEndDate = LocalDate.now().plusWeeks(Math.max(1, totalMinutes / 60));
 
@@ -111,4 +111,7 @@ public class TreatmentPlanService {
         return treatmentPlanRepository.existsByQuote_Id(quoteId);
     }
 
+    public TreatmentPlan save(TreatmentPlan plan) {
+        return treatmentPlanRepository.save(plan);
+    }
 }

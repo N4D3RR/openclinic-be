@@ -125,8 +125,15 @@ public class AppointmentService {
         if (payload.status() != null) found.setStatus(payload.status());
         if (payload.notes() != null) found.setNotes(payload.notes());
 
+        Appointment saved = appointmentRepository.save(found);
+
+        //verifica e segna come completato
+        if (payload.status() == AppointmentStatus.COMPLETED) {
+            checkAndCompletePlan(saved);
+        }
+
         log.info("Appointment with id " + id + " updated successfully");
-        return appointmentRepository.save(found);
+        return saved;
     }
 
     // UPDATE STATUS
@@ -153,10 +160,27 @@ public class AppointmentService {
         return user.getRole() == UserType.ADMIN || user.getRole() == UserType.SECRETARY;
     }
 
+    //verifica se appuntamento/paziente è dell'user non admin che accede
     private void checkOwnership(Appointment appointment, User currentUser) {
 
         if (!isAdminOrSecretary(currentUser) && !appointment.getUser().getId().equals(currentUser.getId())) {
             throw new UnauthorizedException("You can only access your own appointments");
+        }
+    }
+
+    //verifica stato appuntamenti per completare piano di cura
+    private void checkAndCompletePlan(Appointment appointment) {
+        TreatmentPlan plan = appointment.getTreatmentPlan();
+        if (plan == null) return;
+        if (plan.getStatus() == TreatmentPlanStatus.COMPLETED) return;
+
+        boolean allCompleted = plan.getAppointments().stream()
+                .allMatch(a -> a.getStatus() == AppointmentStatus.COMPLETED);
+
+        if (allCompleted && !plan.getAppointments().isEmpty()) {
+            plan.setStatus(TreatmentPlanStatus.COMPLETED);
+            treatmentPlanService.save(plan);
+            log.info("TreatmentPlan " + plan.getId() + " auto-completed");
         }
     }
 
