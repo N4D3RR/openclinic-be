@@ -20,6 +20,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -116,5 +117,10 @@ public class QuoteController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"preventivo-" + id + ".pdf\"")
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(pdf);
+    }
+    
+    @GetMapping("/kpi")
+    public Map<String, Object> getKpi() {
+        return quoteService.getKpi();
     }
 }

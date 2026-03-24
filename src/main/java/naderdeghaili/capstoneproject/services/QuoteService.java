@@ -12,6 +12,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -130,6 +132,17 @@ public class QuoteService {
         Quote found = this.findById(quoteId, currentUser);
         quoteRepository.delete(found);
         log.info("Quote with id " + quoteId + " deleted by " + currentUser.getId());
+    }
+
+    //GET QUOTES KPI
+    public Map<String, Object> getKpi() {
+        Map<String, Object> kpi = new HashMap<>();
+        kpi.put("total", quoteRepository.countAll());
+        kpi.put("draft", quoteRepository.countByStatus(QuoteStatus.DRAFT));
+        kpi.put("sent", quoteRepository.countByStatus(QuoteStatus.SENT));
+        kpi.put("accepted", quoteRepository.countByStatus(QuoteStatus.ACCEPTED));
+        kpi.put("rejected", quoteRepository.countByStatus(QuoteStatus.REJECTED));
+        return kpi;
     }
 
     //verifico che il DENTIST stia accedendo solo ai propri preventivi
