@@ -6,9 +6,13 @@ import naderdeghaili.capstoneproject.mappers.DTOMapper;
 import naderdeghaili.capstoneproject.payloads.create.PaymentCreateDTO;
 import naderdeghaili.capstoneproject.payloads.responses.PaymentResponseDTO;
 import naderdeghaili.capstoneproject.payloads.update.PaymentUpdateDTO;
+import naderdeghaili.capstoneproject.services.InvoiceService;
 import naderdeghaili.capstoneproject.services.PaymentService;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -25,10 +29,12 @@ public class PaymentController {
 
     private final PaymentService paymentService;
     private final DTOMapper mapper;
+    private final InvoiceService invoiceService;
 
-    public PaymentController(PaymentService paymentService, DTOMapper mapper) {
+    public PaymentController(PaymentService paymentService, DTOMapper mapper, InvoiceService invoiceService) {
         this.paymentService = paymentService;
         this.mapper = mapper;
+        this.invoiceService = invoiceService;
     }
 
     //GET ALL - /api/payments
@@ -125,5 +131,15 @@ public class PaymentController {
     @GetMapping("/kpi")
     public Map<String, Object> getKpi() {
         return paymentService.getKpi();
+    }
+
+
+    @GetMapping("/{id}/invoice")
+    public ResponseEntity<byte[]> downloadInvoice(@PathVariable UUID id) {
+        byte[] pdf = invoiceService.generateInvoice(id);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"fattura-" + id + ".pdf\"")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdf);
     }
 }

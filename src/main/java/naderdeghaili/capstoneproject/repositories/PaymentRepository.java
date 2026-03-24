@@ -52,4 +52,8 @@ public interface PaymentRepository extends JpaRepository<Payment, UUID> {
             "GROUP BY EXTRACT(YEAR FROM p.paymentDate), EXTRACT(MONTH FROM p.paymentDate) " +
             "ORDER BY EXTRACT(YEAR FROM p.paymentDate) DESC, EXTRACT(MONTH FROM p.paymentDate) DESC")
     List<Object[]> monthlyRevenue();
+
+    //numeri progressivi pagamenti con stato PAGATO per fatture
+    @Query("SELECT COUNT(p) FROM Payment p WHERE p.status = 'PAID' and EXTRACT(YEAR FROM p.paymentDate) = :year")
+    Long countPaidByYear(@Param("year") int year);
 }

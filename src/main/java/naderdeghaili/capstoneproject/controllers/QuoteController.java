@@ -7,9 +7,13 @@ import naderdeghaili.capstoneproject.mappers.DTOMapper;
 import naderdeghaili.capstoneproject.payloads.create.QuoteCreateDTO;
 import naderdeghaili.capstoneproject.payloads.responses.QuoteResponseDTO;
 import naderdeghaili.capstoneproject.payloads.update.QuoteUpdateDTO;
+import naderdeghaili.capstoneproject.services.QuotePdfService;
 import naderdeghaili.capstoneproject.services.QuoteService;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
@@ -25,10 +29,12 @@ public class QuoteController {
 
     private final QuoteService quoteService;
     private final DTOMapper mapper;
+    private final QuotePdfService quotePdfService;
 
-    public QuoteController(QuoteService quoteService, DTOMapper mapper) {
+    public QuoteController(QuoteService quoteService, DTOMapper mapper, QuotePdfService quotePdfService) {
         this.quoteService = quoteService;
         this.mapper = mapper;
+        this.quotePdfService = quotePdfService;
     }
 
     //GET ALL - api/quotes
@@ -100,5 +106,15 @@ public class QuoteController {
     public void delete(@PathVariable UUID quoteId,
                        @AuthenticationPrincipal User currentUser) {
         this.quoteService.findByIdAndDelete(quoteId, currentUser);
+    }
+
+    //GET PDF QUOTE - api/quotes/{id}/pdf
+    @GetMapping("/{id}/pdf")
+    public ResponseEntity<byte[]> downloadPdf(@PathVariable UUID id) {
+        byte[] pdf = quotePdfService.generatePdf(id);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"preventivo-" + id + ".pdf\"")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdf);
     }
 }
