@@ -55,5 +55,11 @@ public class ErrorsHandler {
         return new ErrorsDTO("Invalid request body " + ex.getMessage(), LocalDateTime.now());
     }
 
+    @ExceptionHandler(IllegalStateException.class)
+    @ResponseStatus(HttpStatus.CONFLICT) //409
+    public ErrorsDTO handleIllegalStateException(IllegalStateException ex) {
+        return new ErrorsDTO(ex.getMessage(), LocalDateTime.now());
+    }
+
 
 }

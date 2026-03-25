@@ -96,6 +96,10 @@ public class AppointmentService {
         if (payload.treatmentPlanId() != null)
             treatmentPlan = treatmentPlanService.findById(payload.treatmentPlanId());
 
+        LocalDateTime end = payload.dateTime().plusMinutes(payload.duration());
+        if (appointmentRepository.existsByUser_IdAndDateTimeBetween(user.getId(), payload.dateTime(), end))
+            throw new IllegalArgumentException("Dentist already has an appointment in this time slot");
+
         Appointment appointment = new Appointment(
                 patient,
                 user,
@@ -108,9 +112,6 @@ public class AppointmentService {
         if (treatmentPlan != null)
             treatmentPlan.addAppointment(appointment);
 
-        LocalDateTime end = payload.dateTime().plusMinutes(payload.duration());
-        if (appointmentRepository.existsByUser_IdAndDateTimeBetween(user.getId(), payload.dateTime(), end))
-            throw new IllegalArgumentException("Dentist already has an appointment in this time slot");
 
         log.info("Appointment for patient " + patient.getId() + " saved successfully");
         return appointmentRepository.save(appointment);

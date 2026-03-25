@@ -66,7 +66,7 @@ public class AiService {
 
             HttpResponse<String> response = client.send(request,
                     HttpResponse.BodyHandlers.ofString());
-            log.info("OpenRouter response: {}", response.body());
+            log.debug("OpenRouter response: {}", response.body());
             return extractContent(response.body());
 
         } catch (Exception e) {
@@ -139,9 +139,9 @@ public class AiService {
             return "Errore del servizio AI. Riprova più tardi.";
         }
         //parsing manuale — evita dipendenze aggiuntive
-        int idx = json.indexOf("\"content\":");
-        if (idx == -1) throw new RuntimeException("Risposta AI non valida");
-        int contentIdx = json.indexOf("\"content\":", idx);
+
+        int contentIdx = json.indexOf("\"content\":");
+        if (contentIdx == -1) throw new RuntimeException("Risposta AI non valida");
         int valueStart = contentIdx + 10;
         while (valueStart < json.length() && json.charAt(valueStart) == ' ') valueStart++;
         if (contentIdx == -1) throw new RuntimeException("Risposta AI non valida");

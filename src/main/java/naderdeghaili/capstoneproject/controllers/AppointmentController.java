@@ -66,13 +66,13 @@ public class AppointmentController {
         return this.appointmentService.findByUser(userId, page, size).map(mapper::toAppointmentDTO);
     }
 
-    //GET BY DATE RANGE /api/appointments/date-range}
+    //GET BY DATE RANGE /api/appointments/date-range
     @GetMapping("/date-range")
-    public Page<AppointmentResponseDTO> getByPatient(@AuthenticationPrincipal User currentUser,
-                                                     @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from,
-                                                     @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime to,
-                                                     @RequestParam(defaultValue = "0") int page,
-                                                     @RequestParam(defaultValue = "10") int size) {
+    public Page<AppointmentResponseDTO> getByDateRange(@AuthenticationPrincipal User currentUser,
+                                                       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from,
+                                                       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime to,
+                                                       @RequestParam(defaultValue = "0") int page,
+                                                       @RequestParam(defaultValue = "10") int size) {
 
         return this.appointmentService.findByDateRange(currentUser, from, to, page, size).map(mapper::toAppointmentDTO);
     }

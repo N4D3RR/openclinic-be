@@ -88,6 +88,8 @@ public class UserService {
     // DELETE
     public void findByIdAndDelete(UUID userId) {
         User found = this.findByID(userId);
+        if (found.getRole() == UserType.ADMIN && userRepository.countByRole(UserType.ADMIN) <= 1)
+            throw new IllegalArgumentException("Cannot delete the last admin user");
         userRepository.delete(found);
         log.info("User with id " + userId + " deleted successfully");
     }

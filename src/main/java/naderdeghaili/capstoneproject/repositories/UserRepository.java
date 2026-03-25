@@ -19,4 +19,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     //validazione registrazione
     boolean existsByEmail(String email);
 
+    long countByRole(UserType role);
+
+
 }

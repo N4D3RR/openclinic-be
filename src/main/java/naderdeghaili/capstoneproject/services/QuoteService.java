@@ -58,7 +58,7 @@ public class QuoteService {
     //GET BY PATIENT
     public Page<Quote> findByPatient(UUID patientId, User currentUser, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        if (currentUser.getRole() == UserType.ADMIN) {
+        if (currentUser.getRole() == UserType.ADMIN || currentUser.getRole() == UserType.SECRETARY) {
             return quoteRepository.findByPatient_Id(patientId, pageable);
         }
         return quoteRepository.findByPatient_IdAndDentist_Id(patientId, currentUser.getId(), pageable);
