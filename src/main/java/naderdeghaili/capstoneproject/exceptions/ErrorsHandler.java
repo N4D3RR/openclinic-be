@@ -61,5 +61,10 @@ public class ErrorsHandler {
         return new ErrorsDTO(ex.getMessage(), LocalDateTime.now());
     }
 
+    @ExceptionHandler(org.springframework.dao.DataIntegrityViolationException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorsDTO handleDataIntegrityViolation(org.springframework.dao.DataIntegrityViolationException ex) {
+        return new ErrorsDTO("Impossibile eliminare: il paziente ha dati collegati (trattamenti, appuntamenti o pagamenti)", LocalDateTime.now());
+    }
 
 }

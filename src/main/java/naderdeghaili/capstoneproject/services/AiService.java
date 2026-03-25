@@ -18,6 +18,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
+//TODO: aggiungere analisi rx per riconoscimento patologie, canali, elementi dentali
 @Service
 @Slf4j
 public class AiService {
