@@ -1,5 +1,6 @@
 package naderdeghaili.capstoneproject.controllers;
 
+import naderdeghaili.capstoneproject.entities.Appointment;
 import naderdeghaili.capstoneproject.entities.User;
 import naderdeghaili.capstoneproject.exceptions.ValidationException;
 import naderdeghaili.capstoneproject.mappers.DTOMapper;
@@ -7,6 +8,7 @@ import naderdeghaili.capstoneproject.payloads.create.AppointmentCreateDTO;
 import naderdeghaili.capstoneproject.payloads.responses.AppointmentResponseDTO;
 import naderdeghaili.capstoneproject.payloads.update.AppointmentUpdateDTO;
 import naderdeghaili.capstoneproject.services.AppointmentService;
+import naderdeghaili.capstoneproject.services.MailgunService;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -23,11 +25,13 @@ import java.util.UUID;
 public class AppointmentController {
 
     private final AppointmentService appointmentService;
+    private final MailgunService mailgunService;
     private final DTOMapper mapper;
 
 
-    public AppointmentController(AppointmentService appointmentService, DTOMapper mapper) {
+    public AppointmentController(AppointmentService appointmentService, MailgunService mailgunService, DTOMapper mapper) {
         this.appointmentService = appointmentService;
+        this.mailgunService = mailgunService;
         this.mapper = mapper;
     }
 
@@ -86,7 +90,9 @@ public class AppointmentController {
         if (validation.hasErrors())
             throw new ValidationException(validation.getAllErrors().stream().map(e -> e.getDefaultMessage()).toList());
 
-        return mapper.toAppointmentDTO(this.appointmentService.saveAppointment(payload, currentUser));
+        Appointment saved = appointmentService.saveAppointment(payload, currentUser);
+        mailgunService.sendAppointmentConfirmation(saved);
+        return mapper.toAppointmentDTO(saved);
     }
 
     //PUT /api/appointments/{appointmentId}

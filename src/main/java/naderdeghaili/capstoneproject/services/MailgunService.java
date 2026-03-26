@@ -13,9 +13,9 @@ import java.time.format.DateTimeFormatter;
 @Slf4j
 public class MailgunService {
 
-    private static final String FROM = "OpenClinic <noreply@openclinic.it>";
     private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private static final DateTimeFormatter TIME_FMT = DateTimeFormatter.ofPattern("HH:mm");
+    private final String FROM;
     private final String domain;
     private final String apiKey;
 
@@ -23,6 +23,7 @@ public class MailgunService {
                           @Value("${mailgun.apiKey}") String apiKey) {
         this.domain = domain;
         this.apiKey = apiKey;
+        this.FROM = "OpenClinic <mailgun@" + domain + ">";
     }
 
     public void sendAppointmentConfirmation(Appointment appointment) {
@@ -61,7 +62,7 @@ public class MailgunService {
         try {
             Unirest.post("https://api.mailgun.net/v3/" + domain + "/messages")
                     .basicAuth("api", apiKey)
-                    .queryString("from", FROM)
+                    .queryString("from", this.FROM)
                     .queryString("to", to)
                     .queryString("subject", subject)
                     .queryString("text", body)

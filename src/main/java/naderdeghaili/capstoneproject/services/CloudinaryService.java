@@ -24,7 +24,13 @@ public class CloudinaryService {
     public String upload(MultipartFile file) {
 
         try {
-            Map result = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
+            String contentType = file.getContentType();
+            String resourceType = (contentType != null && contentType.equals("application/pdf"))
+                    ? "raw"
+                    : "image";
+
+            Map result = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", resourceType, "use_filename", true, "unique_filename", true));
+            log.info("Cloudinary upload result: {}", result);
             return (String) result.get("secure_url");
         } catch (IOException e) {
             throw new RuntimeException("Failed to upload the file", e);
