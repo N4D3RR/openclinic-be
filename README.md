@@ -127,8 +127,7 @@ Swagger UI: `http://localhost:3004/swagger-ui.html`
 ### 1. Create the database
 
 ```sql
-CREATE
-DATABASE OpenClinic;
+CREATE DATABASE OpenClinic;
 ```
 
 ### 2. Configure environment
