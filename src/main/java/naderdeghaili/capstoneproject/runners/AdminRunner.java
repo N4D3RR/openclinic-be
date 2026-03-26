@@ -8,6 +8,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+//creo utente admin al primo avvio se non c'è
+//TODO: rimuovere o spostare in env i dati prima del deploy
 @Component
 public class AdminRunner implements CommandLineRunner {
 

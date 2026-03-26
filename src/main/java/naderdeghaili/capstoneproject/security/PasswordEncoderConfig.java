@@ -5,6 +5,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+//classe separata per evitare dipendenza circolare securityconfig- password encoder- securityconfig
+
 @Configuration
 public class PasswordEncoderConfig {
 

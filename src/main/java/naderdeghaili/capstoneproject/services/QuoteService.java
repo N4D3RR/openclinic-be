@@ -107,15 +107,17 @@ public class QuoteService {
     }
 
     //UPDATE — ADMIN può aggiornare tutto, DENTIST solo i propri
+
     public Quote findByIdAndUpdate(UUID quoteId, QuoteUpdateDTO payload, User currentUser) {
         Quote found = this.findById(quoteId, currentUser);
 
         if (payload.notes() != null) found.setNotes(payload.notes());
-
+//all'accettazione del preventivo viene generato un treatmentplan con createFromQuote
         if (payload.status() != null) {
             if (payload.status() == QuoteStatus.ACCEPTED && found.getStatus() != QuoteStatus.ACCEPTED) {
                 if (found.getItems().isEmpty())
                     throw new IllegalArgumentException("Cannot accept a quote with no items");
+                //evito piani duplicati se imposto più volte lo status accettato
                 if (treatmentPlanService.existsByQuoteId(found.getId()))
                     throw new IllegalStateException("A TreatmentPlan already exists for this quote");
                 treatmentPlanService.createFromQuote(found);

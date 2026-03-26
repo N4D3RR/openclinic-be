@@ -170,6 +170,7 @@ public class AppointmentService {
     }
 
     //verifica stato appuntamenti per completare piano di cura
+    //quando tutti gli appuntamenti sono COMPLETED treatmentPlan viene completato automaticamente
     private void checkAndCompletePlan(Appointment appointment) {
         TreatmentPlan plan = appointment.getTreatmentPlan();
         if (plan == null) return;

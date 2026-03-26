@@ -19,7 +19,7 @@ import java.util.List;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-
+    //checkerFilter come parametro di sfc per evitare dipendenza circolare con UserService- passwordEncoder
     @Bean
     public SecurityFilterChain sfc(HttpSecurity httpSecurity, JWTCheckerFilter jwtCheckerFilter) {
         httpSecurity.cors(cors -> cors.configurationSource(corsConfigurationSource()));

@@ -22,6 +22,8 @@ public class TreatmentPlanService {
     private final TreatmentPlanRepository treatmentPlanRepository;
     private final AppointmentService appointmentService;
 
+    //Lazy perchè treatmentPlanService e appointmentService si dipendono a vicenda
+    //con lazy rompo il ciclo di dipendenza
     public TreatmentPlanService(TreatmentPlanRepository treatmentPlanRepository,
                                 @Lazy AppointmentService appointmentService) {
         this.treatmentPlanRepository = treatmentPlanRepository;
