@@ -1,4 +1,4 @@
-package naderdeghaili.capstoneproject.Jobs;
+package naderdeghaili.capstoneproject.jobs;
 
 
 import lombok.extern.slf4j.Slf4j;

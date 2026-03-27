@@ -32,7 +32,7 @@ public class AdminRunner implements CommandLineRunner {
                     UserType.ADMIN
             );
             userRepository.save(admin);
-            System.out.println("Admin user created: admin@test.it / Admin1234");
+            System.out.println("Admin user created");
         }
     }
 }
