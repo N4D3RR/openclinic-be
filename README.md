@@ -181,12 +181,8 @@ Set the following environment variables in your `.env` file:
 ./mvnw spring-boot:run
 ```
 
-On first startup, `AdminRunner` creates a default admin account:
-
-| Field    | Value           |
-|----------|-----------------|
-| Email    | `admin@test.it` |
-| Password | `Admin1234`     |
+On first startup, `AdminRunner` creates a default admin account using the
+`ADMIN_DEFAULT_EMAIL` and `ADMIN_DEFAULT_PASSWORD` environment variables.
 
 > **Note:** remove or protect the `AdminRunner` seed before deploying to production.
 
@@ -227,7 +223,7 @@ Obtain a token via:
 POST /auth/login
 Content-Type: application/json
 
-{ "email": "admin@test.it", "password": "Admin1234" }
+{ "email": "<your admin email>", "<your admin password>" }
 ```
 
 The response contains `accessToken`.
