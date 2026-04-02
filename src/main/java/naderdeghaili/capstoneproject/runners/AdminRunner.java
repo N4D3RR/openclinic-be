@@ -1,20 +1,28 @@
 package naderdeghaili.capstoneproject.runners;
 
 
+import lombok.extern.slf4j.Slf4j;
 import naderdeghaili.capstoneproject.entities.User;
 import naderdeghaili.capstoneproject.entities.UserType;
 import naderdeghaili.capstoneproject.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 //creo utente admin al primo avvio se non c'è
-//TODO: rimuovere o spostare in env i dati prima del deploy
+@Slf4j
 @Component
 public class AdminRunner implements CommandLineRunner {
 
     private final UserRepository userRepository;
     private final PasswordEncoder encoder;
+
+    @Value("${ADMIN_DEFAULT_EMAIL}")
+    private String adminEmail;
+
+    @Value("${ADMIN_DEFAULT_PASSWORD}")
+    private String adminPassword;
 
     public AdminRunner(UserRepository userRepository, PasswordEncoder encoder) {
         this.userRepository = userRepository;
@@ -22,17 +30,17 @@ public class AdminRunner implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         if (!userRepository.existsByEmail("admin@test.it")) {
             User admin = new User(
-                    "Nader",
-                    "Test",
-                    "admin@test.it",
-                    encoder.encode("Admin1234"),
+                    "Admin",
+                    "OpenClinic",
+                    adminEmail,
+                    encoder.encode(adminPassword),
                     UserType.ADMIN
             );
             userRepository.save(admin);
-            System.out.println("Admin user created");
+            log.info("Admin user created");
         }
     }
 }

@@ -159,19 +159,21 @@ openrouter.model=stepfun/step-3.5-flash:free
 
 Set the following environment variables in your `.env` file:
 
-| Variable             | Description                |
-|----------------------|----------------------------|
-| `PORT`               | Server port (e.g. `3004`)  |
-| `PG_DB_NAME`         | PostgreSQL database name   |
-| `PG_USERNAME`        | PostgreSQL username        |
-| `PG_PASSWORD`        | PostgreSQL password        |
-| `JWT_SECRET`         | Secret key for JWT signing |
-| `CLOUDINARY_NAME`    | Cloudinary cloud name      |
-| `CLOUDINARY_API_KEY` | Cloudinary API key         |
-| `CLOUDINARY_SECRET`  | Cloudinary API secret      |
-| `MAILGUN_DOMAIN`     | Mailgun sandbox domain     |
-| `MAILGUN_API_KEY`    | Mailgun API key            |
-| `OPENROUTER_API_KEY` | OpenRouter API key         |
+| Variable                 | Description                |
+|--------------------------|----------------------------|
+| `PORT`                   | Server port (e.g. `3004`)  |
+| `PG_DB_NAME`             | PostgreSQL database name   |
+| `PG_USERNAME`            | PostgreSQL username        |
+| `PG_PASSWORD`            | PostgreSQL password        |
+| `JWT_SECRET`             | Secret key for JWT signing |
+| `CLOUDINARY_NAME`        | Cloudinary cloud name      |
+| `CLOUDINARY_API_KEY`     | Cloudinary API key         |
+| `CLOUDINARY_SECRET`      | Cloudinary API secret      |
+| `MAILGUN_DOMAIN`         | Mailgun sandbox domain     |
+| `MAILGUN_API_KEY`        | Mailgun API key            |
+| `OPENROUTER_API_KEY`     | OpenRouter API key         |
+| `ADMIN_DEFAULT_EMAIL`    | Default admin email        |
+| `ADMIN_DEFAULT_PASSWORD` | Default admin password     |
 
 ### 3. Run
 
