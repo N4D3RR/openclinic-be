@@ -2,7 +2,7 @@
 
 REST API for OpenClinic, a dental practice management system built as an EPICODE bootcamp capstone project.
 
-> The frontend repository is available at [Capstone-Frontend](https://github.com/N4D3RR/Capstone-Frontend)
+> The frontend repository is available at [Capstone-Frontend](https://github.com/N4D3RR/openclinic-fe)
 
 ---
 
