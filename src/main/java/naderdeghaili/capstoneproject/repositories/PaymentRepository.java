@@ -20,24 +20,24 @@ public interface PaymentRepository extends JpaRepository<Payment, UUID> {
 
     Page<Payment> findByStatus(PaymentStatus status, Pageable pageable);
 
-    //debiti paziente
+    //patient debts
     List<Payment> findByPatient_IdAndStatus(UUID id, PaymentStatus status);
 
-    //filtro per periodo
+    //filter by period
     Page<Payment> findByPaymentDateBetween(LocalDate paymentDateStart, LocalDate paymentDateEnd, Pageable pageable);
 
-    //filtro per periodo + stato
+    //filter by period + status
     Page<Payment> findByPaymentDateBetweenAndStatus(LocalDate paymentDateStart, LocalDate paymentDateEnd, PaymentStatus status, Pageable pageable);
 
-    //somma importi per stato con COALESCE per evitare null se non ci sono risultati
+    //sum amounts by status — COALESCE prevents null when no results exist
     @Query("SELECT COALESCE(SUM(p.amount),0) FROM Payment p WHERE p.status = :status")
     BigDecimal sumByStatus(@Param("status") PaymentStatus status);
 
-    //conta pagamenti per stato
+    //count payments by status
     @Query("SELECT COALESCE(COUNT(p),0) FROM Payment p WHERE p.status = :status")
     Long countByStatus(@Param("status") PaymentStatus status);
 
-    //incasso per mese
+    //revenue for a specific month
     @Query("""
             SELECT COALESCE(SUM(p.amount), 0) FROM Payment p
             WHERE p.status = :status
@@ -46,14 +46,14 @@ public interface PaymentRepository extends JpaRepository<Payment, UUID> {
             """)
     BigDecimal revenueByYearMonth(@Param("status") PaymentStatus status, @Param("year") int year, @Param("month") int month);
 
-    //totali aggregati per mese
+    //monthly revenue aggregates (grouped by year/month, descending)
     @Query("SELECT EXTRACT(YEAR FROM p.paymentDate), EXTRACT(MONTH FROM p.paymentDate), SUM(p.amount) " +
             "FROM Payment p WHERE p.status = 'PAID' " +
             "GROUP BY EXTRACT(YEAR FROM p.paymentDate), EXTRACT(MONTH FROM p.paymentDate) " +
             "ORDER BY EXTRACT(YEAR FROM p.paymentDate) DESC, EXTRACT(MONTH FROM p.paymentDate) DESC")
     List<Object[]> monthlyRevenue();
 
-    //numeri progressivi pagamenti con stato PAGATO per fatture
+    //progressive invoice numbering for PAID payments
     @Query("SELECT COUNT(p) FROM Payment p WHERE p.status = 'PAID' and EXTRACT(YEAR FROM p.paymentDate) = :year")
     Long countPaidByYear(@Param("year") int year);
 }

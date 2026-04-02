@@ -67,7 +67,7 @@ public class PaymentService {
         return paymentRepository.findByStatus(status, pageable);
     }
 
-    //GET PENDING PAYMENTS BY PATIENT (per calcolo debiti)
+    //GET PENDING PAYMENTS BY PATIENT (debts calculation)
     public List<Payment> findPendingByPatient(UUID patientId) {
         return paymentRepository.findByPatient_IdAndStatus(patientId, PaymentStatus.PENDING);
     }

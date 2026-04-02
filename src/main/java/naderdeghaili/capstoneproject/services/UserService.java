@@ -85,7 +85,7 @@ public class UserService {
 
     }
 
-    // DELETE
+    //DELETE
     public void findByIdAndDelete(UUID userId) {
         User found = this.findByID(userId);
         if (found.getRole() == UserType.ADMIN && userRepository.countByRole(UserType.ADMIN) <= 1)

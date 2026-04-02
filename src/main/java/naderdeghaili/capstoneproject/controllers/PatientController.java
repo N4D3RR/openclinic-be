@@ -42,7 +42,7 @@ public class PatientController {
         return mapper.toPatientDTO(this.patientService.findById(patientId));
     }
 
-    // GET BY LASTNAME /api/patients/search?lastName=
+    //GET BY LASTNAME /api/patients/search?lastName=
     @GetMapping("/search")
     public Page<PatientResponseDTO> searchByLastName(@RequestParam String lastName,
                                                      @RequestParam(defaultValue = "0") int page,
@@ -50,7 +50,7 @@ public class PatientController {
         return this.patientService.findByLastName(lastName, page, size).map(mapper::toPatientDTO);
     }
 
-    // POST /api/patients
+    //POST /api/patients
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAnyAuthority('ADMIN', 'SECRETARY')")
@@ -74,7 +74,7 @@ public class PatientController {
         return mapper.toPatientDTO(this.patientService.findByIdAndUpdate(id, payload));
     }
 
-    // DELETE /api/patients/{id}
+    //DELETE /api/patients/{id}
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAnyAuthority('ADMIN', 'SECRETARY')")

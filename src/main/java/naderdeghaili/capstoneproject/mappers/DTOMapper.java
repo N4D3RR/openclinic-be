@@ -4,12 +4,7 @@ import naderdeghaili.capstoneproject.entities.*;
 import naderdeghaili.capstoneproject.payloads.responses.*;
 import org.springframework.stereotype.Component;
 
-/*
- * Per non esporre direttamente le entities, creo un component che contiene metodi per copiare i dati dall'entity in un oggetto da mandare all'utente.
- * risolvo loop nei JSON
- * più sicuro, rendo il DB "indipendente" dall'API
- *
- * */
+//Map JPA entities to response DTOs — prevents exposing entities and breaks JSON cycles
 @Component
 public class DTOMapper {
 
@@ -79,7 +74,7 @@ public class DTOMapper {
         );
     }
 
-    // ─── ENTITÀ CON RELAZIONI (rompe i cicli con ID) ──────────────
+    //entities with relations
 
     public QuoteItemResponseDTO toQuoteItemDTO(QuoteItem item) {
         if (item == null) return null;

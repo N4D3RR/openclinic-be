@@ -13,7 +13,7 @@ public interface DocumentRepository extends JpaRepository<Document, UUID> {
 
     Page<Document> findByClinicalRecord_Patient_Id(UUID id, Pageable pageable);
 
-    //filtro tipi documento
+    //filter document types
     Page<Document> findByClinicalRecord_IdAndType(UUID id, DocumentType type, Pageable pageable);
 
 

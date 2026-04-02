@@ -56,8 +56,8 @@ public class TreatmentPlanController {
         return mapper.toTreatmentPlanDTO(this.treatmentPlanService.findByQuote(quoteId));
     }
 
-    //POST - viene eseguita automaticamente quando eseguo un PUT del Quote
-    //quando passa da DRAFT ad ACCEPTED viene creato il treatmentplan con createFromQuote
+    //POST - auto-created when a Quote transitions to ACCEPTED (no manual endpoint)
+
 
     //PUT - api/treatment-plans/{treatmentPlanId}
     @PutMapping("/{treatmentPlanId}")

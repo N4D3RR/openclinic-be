@@ -12,7 +12,7 @@ public interface TreatmentRepository extends JpaRepository<Treatment, UUID> {
 
     Page<Treatment> findByAppointment_Id(UUID id, Pageable pageable);
 
-    //storico trattamenti paziente
+    //patient treatment history
     Page<Treatment> findByAppointment_Patient_Id(UUID id, Pageable pageable);
 
     Page<Treatment> findByProcedure_Id(UUID id, Pageable pageable);

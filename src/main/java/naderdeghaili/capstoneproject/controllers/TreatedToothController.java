@@ -29,7 +29,7 @@ public class TreatedToothController {
         this.mapper = mapper;
     }
 
-    //GET BY TREATMENT - api/treated-tooth
+    //GET BY TREATMENT - api/treated-teeth/treatment/{treatmentId}
     @GetMapping("/treatment/{treatmentId}")
     public Page<TreatedToothResponseDTO> getByTreatment(@PathVariable UUID treatmentId,
                                                         @RequestParam(defaultValue = "0") int page,
@@ -37,6 +37,7 @@ public class TreatedToothController {
         return this.treatedToothService.findByTreatment(treatmentId, page, size).map(mapper::toTreatedToothDTO);
     }
 
+    //GET BY PATIENT - api/treated-teeth/patient/{patientId}
     @GetMapping("/patient/{patientId}")
     public Page<TreatedToothResponseDTO> getByPatient(@PathVariable UUID patientId,
                                                       @RequestParam(defaultValue = "0") int page,
@@ -44,6 +45,7 @@ public class TreatedToothController {
         return this.treatedToothService.findByPatient(patientId, page, size).map(mapper::toTreatedToothDTO);
     }
 
+    //GET BY TOOTH CODE - api/treated-teeth/tooth/{toothCode}
     @GetMapping("/tooth/{toothCode}")
     public Page<TreatedToothResponseDTO> getByToothCode(@PathVariable Integer toothCode,
                                                         @RequestParam(defaultValue = "0") int page,
@@ -51,6 +53,7 @@ public class TreatedToothController {
         return this.treatedToothService.findByToothCode(toothCode, page, size).map(mapper::toTreatedToothDTO);
     }
 
+    //GET BY TOOTH CODE AND PATIENT - api/treated-teeth/tooth/{toothCode}/patient/{patientId}
     @GetMapping("/tooth/{toothCode}/patient/{patientId}")
     public Page<TreatedToothResponseDTO> getByToothCodeAndPatient(@PathVariable Integer toothCode,
                                                                   @PathVariable UUID patientId,
@@ -59,11 +62,13 @@ public class TreatedToothController {
         return this.treatedToothService.findByToothCodeAndPatient(toothCode, patientId, page, size).map(mapper::toTreatedToothDTO);
     }
 
+    //GET BY ID - api/treated-teeth/{toothId}
     @GetMapping("/{toothId}")
     public TreatedToothResponseDTO getById(@PathVariable UUID toothId) {
         return mapper.toTreatedToothDTO(this.treatedToothService.findById(toothId));
     }
 
+    //POST - api/treated-teeth/
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public TreatedToothResponseDTO create(@RequestBody @Validated TreatedToothCreateDTO payload, BindingResult validation) {
@@ -74,6 +79,7 @@ public class TreatedToothController {
         return mapper.toTreatedToothDTO(this.treatedToothService.saveTreatedTooth(payload));
     }
 
+    //PUT - api/treated-teeth/{id}
     @PutMapping("/{id}")
     public TreatedToothResponseDTO update(@PathVariable UUID id,
                                           @RequestBody @Validated TreatedToothUpdateDTO payload, BindingResult validation) {
@@ -84,6 +90,7 @@ public class TreatedToothController {
         return mapper.toTreatedToothDTO(this.treatedToothService.findByIdAndUpdate(id, payload));
     }
 
+    //DELETE - api/treated-teeth/{id}
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable UUID id) {

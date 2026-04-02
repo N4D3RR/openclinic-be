@@ -30,7 +30,7 @@ public class UserController {
         this.mapper = mapper;
     }
 
-    //GET /api/users/me - utente loggato
+    //GET /api/users/me - logged user
     @GetMapping("/me")
     public UserResponseDTO getMe(@AuthenticationPrincipal User currentUser) {
         return mapper.toUserDTO(currentUser);

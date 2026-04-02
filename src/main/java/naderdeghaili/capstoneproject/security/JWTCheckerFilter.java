@@ -32,7 +32,7 @@ public class JWTCheckerFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        // AUTENTICAZIONE
+        //AUTHENTICATION
         String authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer "))
             throw new UnauthorizedException("Missing or invalid Authorization header");
@@ -41,7 +41,7 @@ public class JWTCheckerFilter extends OncePerRequestFilter {
 
         jwtTools.verifyToken(accessToken);
 
-        // AUTORIZZAZIONE
+        //AUTHORIZATION
         UUID userId = jwtTools.getIdFromToken(accessToken);
         User authorizedUser = userService.findByID(userId);
 
@@ -57,10 +57,10 @@ public class JWTCheckerFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        AntPathMatcher matcher = new AntPathMatcher(); //autorizzo i sotto percorsi
+        AntPathMatcher matcher = new AntPathMatcher();
         String path = request.getServletPath();
 
-        return matcher.match("/auth/**", path) //autorizzo auth/login, auth/register
+        return matcher.match("/auth/**", path)
                 || matcher.match("/swagger-ui/**", path)
                 || matcher.match("/swagger-ui.html", path)
                 || matcher.match("/api-docs/**", path)

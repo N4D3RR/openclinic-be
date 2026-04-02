@@ -24,25 +24,25 @@ public class ProcedureService {
         this.procedureRepository = procedureRepository;
     }
 
-    // GET ALL
+    //GET ALL
     public Page<Procedure> getAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return procedureRepository.findAll(pageable);
     }
 
-    // GET BY ID
+    //GET BY ID
     public Procedure findById(UUID procedureId) {
         return procedureRepository.findById(procedureId)
                 .orElseThrow(() -> new NotFoundException("Procedure with id " + procedureId + " not found"));
     }
 
-    // SEARCH BY NAME
+    //SEARCH BY NAME
     public Page<Procedure> findByName(String name, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return procedureRepository.findByNameContainsIgnoreCase(name, pageable);
     }
 
-    // SAVE
+    //SAVE
     public Procedure save(ProcedureCreateDTO payload) {
         if (procedureRepository.existsByCode(payload.code()))
             throw new IllegalArgumentException("Code " + payload.code() + " already in use");
@@ -59,7 +59,7 @@ public class ProcedureService {
         return procedureRepository.save(procedure);
     }
 
-    // UPDATE
+    //UPDATE
     public Procedure findByIdAndUpdate(UUID procedureId, ProcedureUpdateDTO payload) {
         Procedure found = this.findById(procedureId);
 
@@ -72,7 +72,7 @@ public class ProcedureService {
         return procedureRepository.save(found);
     }
 
-    // DELETE
+    //DELETE
     public void findByIdAndDelete(UUID procedureId) {
         Procedure found = this.findById(procedureId);
         procedureRepository.delete(found);

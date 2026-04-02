@@ -22,50 +22,49 @@ public class TreatmentPlanService {
     private final TreatmentPlanRepository treatmentPlanRepository;
     private final AppointmentService appointmentService;
 
-    //Lazy perchè treatmentPlanService e appointmentService si dipendono a vicenda
-    //con lazy rompo il ciclo di dipendenza
+    //@Lazy breaks circular dependency between TreatmentPlanService and AppointmentService
     public TreatmentPlanService(TreatmentPlanRepository treatmentPlanRepository,
                                 @Lazy AppointmentService appointmentService) {
         this.treatmentPlanRepository = treatmentPlanRepository;
         this.appointmentService = appointmentService;
     }
 
-    // GET ALL
+    //GET ALL
     public Page<TreatmentPlan> getAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return treatmentPlanRepository.findAll(pageable);
     }
 
-    // GET BY ID
+    //GET BY ID
     public TreatmentPlan findById(UUID planId) {
         return treatmentPlanRepository.findById(planId)
                 .orElseThrow(() -> new NotFoundException("TreatmentPlan with id " + planId + " not found"));
     }
 
-    // GET BY PATIENT
+    //GET BY PATIENT
     public Page<TreatmentPlan> findByPatient(UUID patientId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return treatmentPlanRepository.findByQuote_Patient_Id(patientId, pageable);
     }
 
-    // GET BY QUOTE
+    //GET BY QUOTE
     public TreatmentPlan findByQuote(UUID quoteId) {
         return treatmentPlanRepository.findByQuote_Id(quoteId)
                 .orElseThrow(() -> new NotFoundException("TreatmentPlan for quote " + quoteId + " not found"));
     }
 
-    // CREATE FROM QUOTE — in QuoteService quando status diventa ACCEPTED viene creato il treatment plan
+    //CREATE FROM QUOTE — in QuoteService when status becomes ACCEPTED, treatment plan is automatically created
     public TreatmentPlan createFromQuote(Quote quote) {
         BigDecimal totalAmount = quote.getItems().stream()
                 .map(QuoteItem::getQuotedPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        //durata dell trattamento
+        //treatment duration
         int totalMinutes = quote.getItems().stream()
                 .mapToInt(item -> item.getProcedure().getDurationInMinutes())
                 .sum();
 
-        //calcolo data di fine come 1 settimana per ogni 60min di trattamenti, minimo 1 settimana
+        //end date calculation is 1 week for every 60min of treatments, min 1 week
         LocalDate expectedEndDate = LocalDate.now().plusWeeks(Math.max(1, totalMinutes / 60));
 
         TreatmentPlan plan = new TreatmentPlan(
@@ -81,7 +80,7 @@ public class TreatmentPlanService {
         return treatmentPlanRepository.save(plan);
     }
 
-    // ADD APPOINTMENT TO PLAN
+    //ADD APPOINTMENT TO PLAN
     public TreatmentPlan addAppointment(UUID planId, UUID appointmentId) {
         TreatmentPlan plan = this.findById(planId);
         Appointment appointment = appointmentService.findById(appointmentId);
@@ -90,7 +89,7 @@ public class TreatmentPlanService {
         return treatmentPlanRepository.save(plan);
     }
 
-    // UPDATE
+    //UPDATE
     public TreatmentPlan findByIdAndUpdate(UUID id, TreatmentPlanUpdateDTO payload) {
         TreatmentPlan found = this.findById(id);
 
@@ -102,7 +101,7 @@ public class TreatmentPlanService {
         return treatmentPlanRepository.save(found);
     }
 
-    // DELETE
+    //DELETE
     public void findByIdAndDelete(UUID id) {
         TreatmentPlan found = this.findById(id);
         treatmentPlanRepository.delete(found);

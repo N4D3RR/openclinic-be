@@ -45,7 +45,7 @@ public class AppointmentController {
     }
 
     //GET BY ID /api/appointments/{appointmentId}
-    //faccio controllo ruolo e ADMIN/SECRETARY vedono tutto, DENTIST solo i propri
+    //check roles ADMIN/SECRETARY see anything, DENTIST only their own
     @GetMapping("/{appointmentId}")
     public AppointmentResponseDTO getById(@PathVariable UUID appointmentId, @AuthenticationPrincipal User currentUser) {
         return mapper.toAppointmentDTO(this.appointmentService.findById(appointmentId, currentUser));

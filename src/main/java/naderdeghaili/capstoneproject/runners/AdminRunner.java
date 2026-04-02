@@ -10,7 +10,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-//creo utente admin al primo avvio se non c'è
+//create admin at first boot if admin is not present
 @Slf4j
 @Component
 public class AdminRunner implements CommandLineRunner {

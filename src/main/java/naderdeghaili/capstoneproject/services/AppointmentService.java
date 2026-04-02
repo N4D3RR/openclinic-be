@@ -31,7 +31,7 @@ public class AppointmentService {
         this.treatmentPlanService = treatmentPlanService;
     }
 
-    // GET ALL - ADMIN e SECRETARY vedono tutto, DENTIST solo i propri
+    //GET ALL - ADMIN e SECRETARY see anything, DENTIST only their own
     public Page<Appointment> getAll(User currentUser, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         if (isAdminOrSecretary(currentUser)) {
@@ -40,7 +40,7 @@ public class AppointmentService {
         return appointmentRepository.findByUser_Id(currentUser.getId(), pageable);
     }
 
-    // GET BY ID - ADMIN e SECRETARY vedono tutto, DENTIST solo i propri
+    //GET BY ID - ADMIN e SECRETARY see anything, DENTIST only their own
     public Appointment findById(UUID appointmentId, User currentUser) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new NotFoundException("Appointment with id " + appointmentId + " not found"));
@@ -54,7 +54,7 @@ public class AppointmentService {
                 .orElseThrow(() -> new NotFoundException("Appointment with id " + appointmentId + " not found"));
     }
 
-    // GET BY PATIENT - ADMIN e SECRETARY vedono tutto, DENTIST solo i propri
+    //GET BY PATIENT - ADMIN e SECRETARY see anything, DENTIST only their own
     public Page<Appointment> findByPatient(UUID patientId, User currentUser, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         if (isAdminOrSecretary(currentUser)) {
@@ -63,13 +63,13 @@ public class AppointmentService {
         return appointmentRepository.findByPatient_IdAndUser_Id(patientId, currentUser.getId(), pageable);
     }
 
-    // GET BY USER - APPUNTAMENTI SINGOLO DENTISTA
+    //GET BY USER - APPUNTAMENTI SINGOLO DENTISTA
     public Page<Appointment> findByUser(UUID userId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return appointmentRepository.findByUser_Id(userId, pageable);
     }
 
-    // GET BY DATE RANGE - ADMIN e SECRETARY vedono tutto, DENTIST solo i propri
+    //GET BY DATE RANGE - ADMIN e SECRETARY see anything, DENTIST only their own
     public Page<Appointment> findByDateRange(User currentUser, LocalDateTime start, LocalDateTime end, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         if (isAdminOrSecretary(currentUser)) {
@@ -78,7 +78,7 @@ public class AppointmentService {
         return appointmentRepository.findByUser_IdAndDateTimeBetween(currentUser.getId(), start, end, pageable);
     }
 
-    // SAVE - ADMIN e SECRETARY salvano tutto, DENTIST/HYGIENIST solo i propri appuntamenti
+    //SAVE - ADMIN e SECRETARY salvano tutto, DENTIST/HYGIENIST only their own appuntamenti
     public Appointment saveAppointment(AppointmentCreateDTO payload, User currentUser) {
         Patient patient = patientService.findById(payload.patientId());
         User user;
@@ -117,7 +117,7 @@ public class AppointmentService {
         return appointmentRepository.save(appointment);
     }
 
-    // UPDATE - ADMIN e SECRETARY modificano tutto, DENTIST solo i propri
+    //UPDATE - ADMIN e SECRETARY modificano tutto, DENTIST only their own
     public Appointment findByIdAndUpdate(UUID id, AppointmentUpdateDTO payload, User currentUser) {
         Appointment found = this.findById(id, currentUser);
 
@@ -137,7 +137,7 @@ public class AppointmentService {
         return saved;
     }
 
-    // UPDATE STATUS
+    //UPDATE STATUS
     public Appointment updateStatus(UUID appointmentId, AppointmentStatus status, User currentUser) {
         Appointment found = this.findById(appointmentId, currentUser);
         found.setStatus(status);
@@ -146,7 +146,7 @@ public class AppointmentService {
         return appointmentRepository.save(found);
     }
 
-    // DELETE - ADMIN/SECRETARY eliminano tutto, DENTIST/HYGIENIST solo i propri
+    //DELETE - ADMIN/SECRETARY eliminano tutto, DENTIST/HYGIENIST only their own
     public void findByIdAndDelete(UUID id, User currentUser) {
 
         Appointment found = this.findById(id, currentUser);

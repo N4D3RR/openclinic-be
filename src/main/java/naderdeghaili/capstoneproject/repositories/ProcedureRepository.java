@@ -11,7 +11,7 @@ import java.util.UUID;
 public interface ProcedureRepository extends JpaRepository<Procedure, UUID> {
     Optional<Procedure> findByCode(String code);
 
-    //ricerca procedure
+    //search procedures
     Page<Procedure> findByNameContainsIgnoreCase(String name, Pageable pageable);
 
     boolean existsByCode(String code);

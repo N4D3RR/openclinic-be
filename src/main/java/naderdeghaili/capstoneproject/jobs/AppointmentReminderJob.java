@@ -26,7 +26,7 @@ public class AppointmentReminderJob {
     }
 
     @Scheduled(cron = "0 0 18 * * *")
-    // ogni giorno alle 18:00 (secondi, mimuti, ore, giorno, mese, giorgioDellaSettimana)
+    //every day at 18:00 (seconds, mimutes, hour, day, month, day of the week)
     public void sendReminders() {
 
         LocalDateTime tomorrowStart = LocalDateTime.now().plusDays(1).toLocalDate().atStartOfDay();

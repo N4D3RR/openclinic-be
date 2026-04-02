@@ -32,7 +32,7 @@ public class QuoteService {
         this.treatmentPlanService = treatmentPlanService;
     }
 
-    //GET ALL — ADMIN vede tutto, DENTIST solo i propri
+    //GET ALL — ADMIN can see any quote, DENTIST only their own
     public Page<Quote> getAll(User currentUser, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         if (currentUser.getRole() == UserType.ADMIN || currentUser.getRole() == UserType.SECRETARY) {
@@ -41,7 +41,7 @@ public class QuoteService {
         return quoteRepository.findByDentist_Id(currentUser.getId(), pageable);
     }
 
-    //GET BY ID — ADMIN vede tutto, DENTIST solo i propri
+    //GET BY ID — ADMIN can see any quote, DENTIST only their own
     public Quote findById(UUID quoteId, User currentUser) {
         Quote quote = quoteRepository.findById(quoteId)
                 .orElseThrow(() -> new NotFoundException("Quote with id " + quoteId + " not found"));
@@ -70,7 +70,7 @@ public class QuoteService {
         return quoteRepository.findByDentist_Id(dentistId, pageable);
     }
 
-    //GET BY STATUS - ADMIN ottiene tutto, DENTIST solo i propri
+    //GET BY STATUS - ADMIN can see any quote, DENTIST only their own
     public Page<Quote> findByStatus(QuoteStatus status, User currentUser, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         if (currentUser.getRole() == UserType.ADMIN) {
@@ -79,11 +79,11 @@ public class QuoteService {
         return quoteRepository.findByDentist_IdAndStatus(currentUser.getId(), status, pageable);
     }
 
-    //SAVE — il dentista autenticato diventa il dentist del preventivo
+    //SAVE — authenticated DENTIST becomes quote dentist
     public Quote saveQuote(QuoteCreateDTO payload, User currentUser) {
         Patient patient = patientService.findById(payload.patientId());
 
-        // ADMIN può specificare un dentista diverso, DENTIST crea per se stesso
+        // ADMIN can assign a different dentist; DENTIST creates for themselves
         User dentist;
         if (currentUser.getRole() == UserType.ADMIN && payload.dentistId() != null) {
             dentist = userService.findByID(payload.dentistId());
@@ -106,18 +106,18 @@ public class QuoteService {
         return quoteRepository.save(quote);
     }
 
-    //UPDATE — ADMIN può aggiornare tutto, DENTIST solo i propri
+    //UPDATE — ADMIN can update any quote, DENTIST only their own
 
     public Quote findByIdAndUpdate(UUID quoteId, QuoteUpdateDTO payload, User currentUser) {
         Quote found = this.findById(quoteId, currentUser);
 
         if (payload.notes() != null) found.setNotes(payload.notes());
-//all'accettazione del preventivo viene generato un treatmentplan con createFromQuote
+        //on ACCEPTED status, auto-generate TreatmentPlan via createFromQuote
         if (payload.status() != null) {
             if (payload.status() == QuoteStatus.ACCEPTED && found.getStatus() != QuoteStatus.ACCEPTED) {
                 if (found.getItems().isEmpty())
                     throw new IllegalArgumentException("Cannot accept a quote with no items");
-                //evito piani duplicati se imposto più volte lo status accettato
+                //avoid duplicate plans if selecting Accept multiple times
                 if (treatmentPlanService.existsByQuoteId(found.getId()))
                     throw new IllegalStateException("A TreatmentPlan already exists for this quote");
                 treatmentPlanService.createFromQuote(found);
@@ -129,7 +129,7 @@ public class QuoteService {
         return quoteRepository.save(found);
     }
 
-    //DELETE — ADMIN può eliminare tutto, DENTIST solo i propri
+    //DELETE — ADMIN can delete anything, DENTIST only their own
     public void findByIdAndDelete(UUID quoteId, User currentUser) {
         Quote found = this.findById(quoteId, currentUser);
         quoteRepository.delete(found);
@@ -147,7 +147,7 @@ public class QuoteService {
         return kpi;
     }
 
-    //verifico che il DENTIST stia accedendo solo ai propri preventivi
+    //check that DENTIST only accesses his own quotes
     private void checkOwnership(Quote quote, User currentUser) {
         if (currentUser.getRole() != UserType.ADMIN
                 && !quote.getDentist().getId().equals(currentUser.getId())) {

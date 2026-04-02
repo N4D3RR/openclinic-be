@@ -97,7 +97,7 @@ public class TreatmentService {
         return treatmentRepository.save(treatment);
     }
 
-    // UPDATE
+    //UPDATE
     public Treatment findByIdAndUpdate(UUID treatmentId, TreatmentUpdateDTO payload) {
         Treatment found = this.findById(treatmentId);
 
@@ -110,7 +110,7 @@ public class TreatmentService {
         return treatmentRepository.save(found);
     }
 
-    // DELETE
+    //DELETE
     public void findByIdAndDelete(UUID treatmentId) {
         Treatment found = this.findById(treatmentId);
         treatmentRepository.delete(found);

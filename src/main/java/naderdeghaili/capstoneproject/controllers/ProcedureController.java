@@ -49,7 +49,7 @@ public class ProcedureController {
     }
 
     //POST - api/procedures
-    //SOLO ADMIN
+    //ADMIN ONLY
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAuthority('ADMIN')")

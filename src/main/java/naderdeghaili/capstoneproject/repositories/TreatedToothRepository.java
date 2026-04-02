@@ -10,10 +10,10 @@ import java.util.UUID;
 public interface TreatedToothRepository extends JpaRepository<TreatedTooth, UUID> {
     Page<TreatedTooth> findByTreatment_Id(UUID id, Pageable pageable);
 
-    //lista denti trattati del paziente
+    //treted teeth list by patient
     Page<TreatedTooth> findByTreatment_Appointment_Patient_Id(UUID id, Pageable pageable);
 
-    //storico dente specifico
+    //history for tooth
     Page<TreatedTooth> findByToothCode(Integer toothCode, Pageable pageable);
 
     Page<TreatedTooth> findByToothCodeAndTreatment_Appointment_Patient_Id(Integer toothCode, UUID patientId, Pageable pageable);

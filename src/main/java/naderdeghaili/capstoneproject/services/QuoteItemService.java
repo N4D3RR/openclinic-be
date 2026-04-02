@@ -28,26 +28,26 @@ public class QuoteItemService {
         this.procedureService = procedureService;
     }
 
-    // GET ALL
+    //GET ALL
     public Page<QuoteItem> getAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return quoteItemRepository.findAll(pageable);
     }
 
-    // GET BY ID
+    //GET BY ID
     public QuoteItem findById(UUID quoteItemId) {
         return quoteItemRepository.findById(quoteItemId)
                 .orElseThrow(() -> new NotFoundException("QuoteItem with id " + quoteItemId + " not found"));
     }
 
-    // GET BY QUOTE
+    //GET BY QUOTE
     public Page<QuoteItem> findByQuote(UUID quoteId, User currentUser, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         quoteService.findById(quoteId, currentUser);
         return quoteItemRepository.findByQuote_Id(quoteId, pageable);
     }
 
-    // SAVE
+    //SAVE
     public QuoteItem saveQuoteItem(QuoteItemCreateDTO payload, User currentUser) {
         Quote quote = quoteService.findById(payload.quoteId(), currentUser);
 
@@ -69,7 +69,7 @@ public class QuoteItemService {
         return quoteItemRepository.save(quoteItem);
     }
 
-    // UPDATE
+    //UPDATE
     public QuoteItem findByIdAndUpdate(UUID id, QuoteItemUpdateDTO payload, User currentUser) {
         QuoteItem found = this.findById(id);
         quoteService.findById(found.getQuote().getId(), currentUser);
@@ -84,7 +84,7 @@ public class QuoteItemService {
         return quoteItemRepository.save(found);
     }
 
-    // DELETE
+    //DELETE
     public void findByIdAndDelete(UUID id, User currentUser) {
         QuoteItem found = this.findById(id);
         quoteService.findById(found.getQuote().getId(), currentUser);

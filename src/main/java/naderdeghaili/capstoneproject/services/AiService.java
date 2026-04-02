@@ -18,7 +18,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
-//TODO: aggiungere analisi rx per riconoscimento patologie, canali, elementi dentali
+
 @Service
 @Slf4j
 public class AiService {
@@ -38,7 +38,7 @@ public class AiService {
     public String chat(List<Map<String, String>> messages) {
         String systemPrompt = buildSystemPrompt();
 
-        //costruisce array messaggi con system prompt in testa
+        //build messages array with system prompt prepended
         StringBuilder messagesJson = new StringBuilder("[");
         messagesJson.append("{\"role\":\"system\",\"content\":")
                 .append(toJson(systemPrompt)).append("}");

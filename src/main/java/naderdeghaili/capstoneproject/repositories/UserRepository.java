@@ -16,7 +16,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     Page<User> findByRole(UserType role, Pageable pageable);
 
-    //validazione registrazione
+    //registration validation
     boolean existsByEmail(String email);
 
     long countByRole(UserType role);

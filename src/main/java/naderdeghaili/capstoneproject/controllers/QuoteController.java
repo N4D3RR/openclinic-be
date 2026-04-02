@@ -39,7 +39,7 @@ public class QuoteController {
     }
 
     //GET ALL - api/quotes
-    // ADMIN vede tutto, DENTIST solo i propri
+    //ADMIN sees anything, DENTIST only their own
     @GetMapping
     public Page<QuoteResponseDTO> getAll(@AuthenticationPrincipal User currentUser,
                                          @RequestParam(defaultValue = "0") int page,
@@ -118,7 +118,7 @@ public class QuoteController {
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(pdf);
     }
-    
+
     @GetMapping("/kpi")
     public Map<String, Object> getKpi() {
         return quoteService.getKpi();

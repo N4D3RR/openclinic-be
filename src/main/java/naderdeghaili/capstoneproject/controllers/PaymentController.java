@@ -112,7 +112,7 @@ public class PaymentController {
         this.paymentService.findByIdAndDelete(paymentId);
     }
 
-    // GET BY DATE RANGE /api/payments/date-range
+    //GET BY DATE RANGE /api/payments/date-range
 
     @GetMapping("/date-range")
     public Page<PaymentResponseDTO> getByDateRange(
@@ -127,7 +127,7 @@ public class PaymentController {
         return paymentService.findByDateRange(from, to, page, size).map(mapper::toPaymentDTO);
     }
 
-    // GET KPI /api/payments/kpi
+    //GET KPI /api/payments/kpi
     @GetMapping("/kpi")
     public Map<String, Object> getKpi() {
         return paymentService.getKpi();

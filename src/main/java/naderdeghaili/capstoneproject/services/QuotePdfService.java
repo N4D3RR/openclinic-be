@@ -36,7 +36,7 @@ public class QuotePdfService {
             PdfWriter.getInstance(doc, out);
             doc.open();
 
-            //Font
+            //font
             Font titleFont = new Font(Font.HELVETICA, 22, Font.BOLD, new Color(0x1B, 0x2A, 0x3D));
             Font sectionFont = new Font(Font.HELVETICA, 11, Font.BOLD, new Color(0x2A, 0x9D, 0x8F));
             Font labelFont = new Font(Font.HELVETICA, 10, Font.BOLD, Color.DARK_GRAY);
@@ -55,7 +55,7 @@ public class QuotePdfService {
             subtitle.setSpacingAfter(20);
             doc.add(subtitle);
 
-            //titolo documento
+            //document title
             Paragraph docTitle = new Paragraph("PREVENTIVO", sectionFont);
             docTitle.setSpacingAfter(4);
             doc.add(docTitle);
@@ -70,7 +70,7 @@ public class QuotePdfService {
             docStatus.setSpacingAfter(20);
             doc.add(docStatus);
 
-            //dati paziente
+            //patient data
             doc.add(new Paragraph("PAZIENTE", sectionFont));
             doc.add(new Paragraph(
                     quote.getPatient().getFirstName() + " " + quote.getPatient().getLastName(), labelFont));
@@ -83,7 +83,7 @@ public class QuotePdfService {
 
             doc.add(Chunk.NEWLINE);
 
-            //dentista
+            //dentist
             if (quote.getDentist() != null) {
                 doc.add(new Paragraph("DENTISTA", sectionFont));
                 doc.add(new Paragraph(
@@ -91,7 +91,7 @@ public class QuotePdfService {
                 doc.add(Chunk.NEWLINE);
             }
 
-            //tabella voci
+            //quote items
             doc.add(new Paragraph("VOCI DEL PREVENTIVO", sectionFont));
 
             PdfPTable table = new PdfPTable(4);
@@ -100,13 +100,13 @@ public class QuotePdfService {
             table.setSpacingBefore(8);
             table.setSpacingAfter(8);
 
-            //intestazione tabella
+            //table header
             addHeaderCell(table, "Prestazione", labelFont);
             addHeaderCell(table, "Codice", labelFont);
             addHeaderCell(table, "Dente", labelFont);
             addHeaderCell(table, "Prezzo €", labelFont);
 
-            //righe
+            //rows
             BigDecimal total = BigDecimal.ZERO;
             for (QuoteItem item : quote.getItems()) {
                 addCell(table, item.getProcedure().getName(), valueFont);
@@ -118,7 +118,7 @@ public class QuotePdfService {
 
             doc.add(table);
 
-            //totale
+            //total
             Paragraph totalPar = new Paragraph(
                     "TOTALE: € " + total.toPlainString(), totalFont);
             totalPar.setAlignment(Element.ALIGN_RIGHT);

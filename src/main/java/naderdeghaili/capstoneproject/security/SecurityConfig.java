@@ -19,15 +19,15 @@ import java.util.List;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    //checkerFilter come parametro di sfc per evitare dipendenza circolare con UserService- passwordEncoder
+    //injected as parameter to avoid circular dependency with UserService
     @Bean
     public SecurityFilterChain sfc(HttpSecurity httpSecurity, JWTCheckerFilter jwtCheckerFilter) {
         httpSecurity.cors(cors -> cors.configurationSource(corsConfigurationSource()));
-        //disabilito login form
+        //disable login form
         httpSecurity.formLogin(fl -> fl.disable());
-        //disabilito controllo sicurezza csrf
+        //disable CSRF (stateless API)
         httpSecurity.csrf(csrf -> csrf.disable());
-        //lavoriamo in modalità stateless
+        //stateless session management
         httpSecurity.sessionManagement(sessions -> sessions.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         httpSecurity.authorizeHttpRequests(request -> request
