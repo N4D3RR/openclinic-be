@@ -184,7 +184,6 @@ Set the following environment variables in your `.env` file:
 On first startup, `AdminRunner` creates a default admin account using the
 `ADMIN_DEFAULT_EMAIL` and `ADMIN_DEFAULT_PASSWORD` environment variables.
 
-> **Note:** remove or protect the `AdminRunner` seed before deploying to production.
 
 
 ---

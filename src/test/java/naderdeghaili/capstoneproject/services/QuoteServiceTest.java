@@ -78,7 +78,7 @@ public class QuoteServiceTest {
     }
 
     @Test
-    @DisplayName("DENTIST crea un preventivo per se stesso")
+    @DisplayName("DENTIST creates a quote for himself")
     void dentist_createsQuoteForHimself() {
         //ARRANGE
         QuoteCreateDTO dto = new QuoteCreateDTO(patientId, null, "Note test");
@@ -96,7 +96,7 @@ public class QuoteServiceTest {
     }
 
     @Test
-    @DisplayName("SECRETARY che crea un preventivo lancia IllegalArgumentException")
+    @DisplayName("SECRETARY who creates quote throws IllegalArgumentException")
     void secretary_creatingQuote_throws() {
         //ARRANGE
         QuoteCreateDTO dto = new QuoteCreateDTO(patientId, null, null);
@@ -108,7 +108,7 @@ public class QuoteServiceTest {
     }
 
     @Test
-    @DisplayName("ADMIN che assegna a un non-DENTIST lancia IllegalArgumentException")
+    @DisplayName("ADMIN assigning a quote to a non-DENTIST throws IllegalArgumentException")
     void admin_assigningToNonDentist_throws() {
         //ARRANGE
         UUID secretaryId = secretary.getId();
@@ -128,7 +128,7 @@ public class QuoteServiceTest {
             field.setAccessible(true);
             field.set(entity, id);
         } catch (Exception e) {
-            throw new RuntimeException("setId fallita su " + entity.getClass().getSimpleName(), e);
+            throw new RuntimeException("setId failed on " + entity.getClass().getSimpleName(), e);
         }
     }
 
@@ -142,26 +142,26 @@ public class QuoteServiceTest {
         @BeforeEach
         void setUpQuote() {
             quoteId = UUID.randomUUID();
-            draftQuote = new Quote(QuoteStatus.DRAFT, "Note originali", patient, dentist);
+            draftQuote = new Quote(QuoteStatus.DRAFT, "Original notes", patient, dentist);
             setId(draftQuote, quoteId);
             when(quoteRepository.findById(quoteId)).thenReturn(Optional.of(draftQuote));
         }
 
         @Test
-        @DisplayName("Aggiornamento note su DRAFT funziona correttamente")
+        @DisplayName("note update on DRAFT works correctly")
         void updateNotes_onDraft_works() {
             //ARRANGE
-            QuoteUpdateDTO dto = new QuoteUpdateDTO(null, "Note aggiornate");
+            QuoteUpdateDTO dto = new QuoteUpdateDTO(null, "Notes updated");
             when(quoteRepository.save(any(Quote.class))).thenAnswer(i -> i.getArgument(0));
             //ACT
             Quote result = quoteService.findByIdAndUpdate(quoteId, dto, dentist);
             //ASSERT
-            assertThat(result.getNotes()).isEqualTo("Note aggiornate");
+            assertThat(result.getNotes()).isEqualTo("Notes updated");
             assertThat(result.getStatus()).isEqualTo(QuoteStatus.DRAFT);
         }
 
         @Test
-        @DisplayName("Accettazione con items crea TreatmentPlan")
+        @DisplayName("Accept with items creates TreatmentPlan")
         void accept_withItems_createsTreatmentPlan() {
             //ARRANGE
             QuoteItem item = mock(QuoteItem.class);
