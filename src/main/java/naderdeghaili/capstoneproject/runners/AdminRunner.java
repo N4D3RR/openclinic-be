@@ -7,12 +7,14 @@ import naderdeghaili.capstoneproject.entities.UserType;
 import naderdeghaili.capstoneproject.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 //create admin at first boot if admin is not present
 @Slf4j
 @Component
+@Order(1)
 public class AdminRunner implements CommandLineRunner {
 
     private final UserRepository userRepository;
