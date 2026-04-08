@@ -12,6 +12,27 @@ REST API for OpenClinic, a dental practice management system built as an EPICODE
 
 ---
 
+## Live Demo
+
+- **App**: [openclinic-fe.vercel.app](https://openclinic-fe.vercel.app)
+- **API**: [openclinic-be-production.up.railway.app](https://openclinic-be-production.up.railway.app)
+- **Swagger UI
+  **: [openclinic-be-production.up.railway.app/swagger-ui.html](https://openclinic-be-production.up.railway.app/swagger-ui.html)
+
+### Demo Credentials
+
+| Role      | Email                        | Password   |
+|-----------|------------------------------|------------|
+| Admin     | admin@openclinic.it          | Admin1234  |
+| Dentist   | marco.bianchi@openclinic.it  | Password1! |
+| Hygienist | sara.conti@openclinic.it     | Password1! |
+| Secretary | giulia.moretti@openclinic.it | Password1! |
+
+> The database is pre-seeded with realistic demo data: 8 patients, 10 dental procedures, appointments, quotes, treatment
+> plans, and payments.
+
+---
+
 ## Tech Stack
 
 |                |                                  |
