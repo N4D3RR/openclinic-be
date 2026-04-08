@@ -31,7 +31,7 @@ public class AdminRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        if (!userRepository.existsByEmail("admin@test.it")) {
+        if (!userRepository.existsByEmail(adminEmail)) {
             User admin = new User(
                     "Admin",
                     "OpenClinic",
