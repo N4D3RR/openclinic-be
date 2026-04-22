@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -25,24 +26,28 @@ public class ProcedureService {
     }
 
     //GET ALL
+    @Transactional(readOnly = true)
     public Page<Procedure> getAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return procedureRepository.findAll(pageable);
     }
 
     //GET BY ID
+    @Transactional(readOnly = true)
     public Procedure findById(UUID procedureId) {
         return procedureRepository.findById(procedureId)
                 .orElseThrow(() -> new NotFoundException("Procedure with id " + procedureId + " not found"));
     }
 
     //SEARCH BY NAME
+    @Transactional(readOnly = true)
     public Page<Procedure> findByName(String name, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return procedureRepository.findByNameContainsIgnoreCase(name, pageable);
     }
 
     //SAVE
+    @Transactional
     public Procedure save(ProcedureCreateDTO payload) {
         if (procedureRepository.existsByCode(payload.code()))
             throw new IllegalArgumentException("Code " + payload.code() + " already in use");
@@ -60,6 +65,7 @@ public class ProcedureService {
     }
 
     //UPDATE
+    @Transactional
     public Procedure findByIdAndUpdate(UUID procedureId, ProcedureUpdateDTO payload) {
         Procedure found = this.findById(procedureId);
 
@@ -73,6 +79,7 @@ public class ProcedureService {
     }
 
     //DELETE
+    @Transactional
     public void findByIdAndDelete(UUID procedureId) {
         Procedure found = this.findById(procedureId);
         procedureRepository.delete(found);

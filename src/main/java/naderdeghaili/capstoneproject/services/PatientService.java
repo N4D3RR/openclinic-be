@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
@@ -27,24 +28,28 @@ public class PatientService {
     }
 
     //GET ALL
+    @Transactional(readOnly = true)
     public Page<Patient> getAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return patientRepository.findAll(pageable);
     }
 
     //GET BY ID
+    @Transactional(readOnly = true)
     public Patient findById(UUID id) {
         return patientRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Patient with id " + id + " not found"));
     }
 
     //SEARCH BY LAST NAME
+    @Transactional(readOnly = true)
     public Page<Patient> findByLastName(String lastName, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return patientRepository.findByLastNameContainsIgnoreCase(lastName, pageable);
     }
 
     //SAVE
+    @Transactional
     public Patient savePatient(PatientCreateDTO payload) {
         if (patientRepository.existsByFiscalCode(payload.fiscalCode()))
             throw new IllegalArgumentException("Fiscal code " + payload.fiscalCode() + " already in use");
@@ -68,6 +73,7 @@ public class PatientService {
     }
 
     //UPDATE
+    @Transactional
     public Patient findByIdAndUpdate(UUID id, PatientUpdateDTO payload) {
         Patient found = this.findById(id);
 
@@ -93,6 +99,7 @@ public class PatientService {
     }
 
     //DELETE
+    @Transactional
     public void findByIdAndDelete(UUID id) {
         Patient found = this.findById(id);
         patientRepository.delete(found);
@@ -100,6 +107,7 @@ public class PatientService {
     }
 
     //UPLOAD PHOTO
+    @Transactional
     public Patient uploadPhoto(UUID patientId, MultipartFile file) {
 
         Patient found = this.findById(patientId);
@@ -110,6 +118,7 @@ public class PatientService {
         return patientRepository.save(found);
     }
 
+    @Transactional(readOnly = true)
     public Page<Patient> globalSearch(String q, int size) {
         return patientRepository.globalSearch(q, PageRequest.of(0, size));
     }

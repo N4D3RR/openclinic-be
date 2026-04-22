@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -28,24 +29,28 @@ public class UserService {
     }
 
     //GET ALL
+    @Transactional(readOnly = true)
     public Page<User> getAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return userRepository.findAll(pageable);
     }
 
     //GET BY ID
+    @Transactional(readOnly = true)
     public User findByID(UUID userId) {
         return userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User with id " + userId + " not found"));
 
     }
 
     //GET BY EMAIL
+    @Transactional(readOnly = true)
     public User findByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("User with email " + email + " not found"));
 
     }
 
     //GET BY ROLE
+    @Transactional(readOnly = true)
     public Page<User> findByRole(UserType role, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return userRepository.findByRole(role, pageable);
@@ -53,6 +58,7 @@ public class UserService {
     }
 
     //SAVE
+    @Transactional
     public User saveUser(UserCreateDTO payload) {
         if (userRepository.existsByEmail(payload.email()))
             throw new IllegalArgumentException("Email " + payload.email() + " already in use");
@@ -67,6 +73,7 @@ public class UserService {
     }
 
     //UPDATE
+    @Transactional
     public User findByIdAndUpdate(UUID userId, UserUpdateDTO payload) {
         User found = this.findByID(userId);
 
@@ -86,6 +93,7 @@ public class UserService {
     }
 
     //DELETE
+    @Transactional
     public void findByIdAndDelete(UUID userId) {
         User found = this.findByID(userId);
         if (found.getRole() == UserType.ADMIN && userRepository.countByRole(UserType.ADMIN) <= 1)

@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -35,37 +36,42 @@ public class TreatmentService {
     }
 
     //GET ALL
+    @Transactional(readOnly = true)
     public Page<Treatment> getAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return treatmentRepository.findAll(pageable);
     }
 
     //GET BY ID
+    @Transactional(readOnly = true)
     public Treatment findById(UUID treatmentId) {
         return treatmentRepository.findById(treatmentId).orElseThrow(() -> new NotFoundException("Treatment with id " + treatmentId + " not found"));
 
     }
 
     //GET BY APPOINTMENT
+    @Transactional(readOnly = true)
     public Page<Treatment> findByAppointment(UUID apppointmentId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return treatmentRepository.findByAppointment_Id(apppointmentId, pageable);
     }
 
     //GET BY PATIENT
-
+    @Transactional(readOnly = true)
     public Page<Treatment> findByPatient(UUID patientId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return treatmentRepository.findByPatient_Id(patientId, pageable);
     }
 
     //GET BY PROCEDURE
+    @Transactional(readOnly = true)
     public Page<Treatment> findByProcedure(UUID procedureId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return treatmentRepository.findByProcedure_Id(procedureId, pageable);
     }
 
     //SAVE
+    @Transactional
     public Treatment saveTreatment(TreatmentCreateDTO payload) {
 
         Patient patient = patientService.findById(payload.patientId());
@@ -98,6 +104,7 @@ public class TreatmentService {
     }
 
     //UPDATE
+    @Transactional
     public Treatment findByIdAndUpdate(UUID treatmentId, TreatmentUpdateDTO payload) {
         Treatment found = this.findById(treatmentId);
 
@@ -111,6 +118,7 @@ public class TreatmentService {
     }
 
     //DELETE
+    @Transactional
     public void findByIdAndDelete(UUID treatmentId) {
         Treatment found = this.findById(treatmentId);
         treatmentRepository.delete(found);

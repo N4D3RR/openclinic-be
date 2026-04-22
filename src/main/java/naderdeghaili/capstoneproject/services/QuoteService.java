@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +34,7 @@ public class QuoteService {
     }
 
     //GET ALL — ADMIN can see any quote, DENTIST only their own
+    @Transactional(readOnly = true)
     public Page<Quote> getAll(User currentUser, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         if (currentUser.getRole() == UserType.ADMIN || currentUser.getRole() == UserType.SECRETARY) {
@@ -42,6 +44,7 @@ public class QuoteService {
     }
 
     //GET BY ID — ADMIN can see any quote, DENTIST only their own
+    @Transactional(readOnly = true)
     public Quote findById(UUID quoteId, User currentUser) {
         Quote quote = quoteRepository.findById(quoteId)
                 .orElseThrow(() -> new NotFoundException("Quote with id " + quoteId + " not found"));
@@ -50,12 +53,14 @@ public class QuoteService {
     }
 
     //GET BY ID
+    @Transactional(readOnly = true)
     public Quote findById(UUID quoteId) {
         return quoteRepository.findById(quoteId)
                 .orElseThrow(() -> new NotFoundException("Quote with id " + quoteId + " not found"));
     }
 
     //GET BY PATIENT
+    @Transactional(readOnly = true)
     public Page<Quote> findByPatient(UUID patientId, User currentUser, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         if (currentUser.getRole() == UserType.ADMIN || currentUser.getRole() == UserType.SECRETARY) {
@@ -65,12 +70,14 @@ public class QuoteService {
     }
 
     //GET BY DENTIST
+    @Transactional(readOnly = true)
     public Page<Quote> findByDentist(UUID dentistId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return quoteRepository.findByDentist_Id(dentistId, pageable);
     }
 
     //GET BY STATUS - ADMIN can see any quote, DENTIST only their own
+    @Transactional(readOnly = true)
     public Page<Quote> findByStatus(QuoteStatus status, User currentUser, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         if (currentUser.getRole() == UserType.ADMIN) {
@@ -80,6 +87,7 @@ public class QuoteService {
     }
 
     //SAVE — authenticated DENTIST becomes quote dentist
+    @Transactional
     public Quote saveQuote(QuoteCreateDTO payload, User currentUser) {
         Patient patient = patientService.findById(payload.patientId());
 
@@ -107,7 +115,7 @@ public class QuoteService {
     }
 
     //UPDATE — ADMIN can update any quote, DENTIST only their own
-
+    @Transactional
     public Quote findByIdAndUpdate(UUID quoteId, QuoteUpdateDTO payload, User currentUser) {
         Quote found = this.findById(quoteId, currentUser);
 
@@ -130,6 +138,7 @@ public class QuoteService {
     }
 
     //DELETE — ADMIN can delete anything, DENTIST only their own
+    @Transactional
     public void findByIdAndDelete(UUID quoteId, User currentUser) {
         Quote found = this.findById(quoteId, currentUser);
         quoteRepository.delete(found);

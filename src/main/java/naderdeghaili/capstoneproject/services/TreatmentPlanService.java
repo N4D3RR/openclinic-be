@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -30,30 +31,35 @@ public class TreatmentPlanService {
     }
 
     //GET ALL
+    @Transactional(readOnly = true)
     public Page<TreatmentPlan> getAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return treatmentPlanRepository.findAll(pageable);
     }
 
     //GET BY ID
+    @Transactional(readOnly = true)
     public TreatmentPlan findById(UUID planId) {
         return treatmentPlanRepository.findById(planId)
                 .orElseThrow(() -> new NotFoundException("TreatmentPlan with id " + planId + " not found"));
     }
 
     //GET BY PATIENT
+    @Transactional(readOnly = true)
     public Page<TreatmentPlan> findByPatient(UUID patientId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return treatmentPlanRepository.findByQuote_Patient_Id(patientId, pageable);
     }
 
     //GET BY QUOTE
+    @Transactional(readOnly = true)
     public TreatmentPlan findByQuote(UUID quoteId) {
         return treatmentPlanRepository.findByQuote_Id(quoteId)
                 .orElseThrow(() -> new NotFoundException("TreatmentPlan for quote " + quoteId + " not found"));
     }
 
     //CREATE FROM QUOTE — in QuoteService when status becomes ACCEPTED, treatment plan is automatically created
+    @Transactional
     public TreatmentPlan createFromQuote(Quote quote) {
         BigDecimal totalAmount = quote.getItems().stream()
                 .map(QuoteItem::getQuotedPrice)
@@ -81,6 +87,7 @@ public class TreatmentPlanService {
     }
 
     //ADD APPOINTMENT TO PLAN
+    @Transactional
     public TreatmentPlan addAppointment(UUID planId, UUID appointmentId) {
         TreatmentPlan plan = this.findById(planId);
         Appointment appointment = appointmentService.findById(appointmentId);
@@ -90,6 +97,7 @@ public class TreatmentPlanService {
     }
 
     //UPDATE
+    @Transactional
     public TreatmentPlan findByIdAndUpdate(UUID id, TreatmentPlanUpdateDTO payload) {
         TreatmentPlan found = this.findById(id);
 
@@ -102,6 +110,7 @@ public class TreatmentPlanService {
     }
 
     //DELETE
+    @Transactional
     public void findByIdAndDelete(UUID id) {
         TreatmentPlan found = this.findById(id);
         treatmentPlanRepository.delete(found);

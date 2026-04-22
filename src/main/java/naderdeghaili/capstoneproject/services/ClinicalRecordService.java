@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -28,24 +29,28 @@ public class ClinicalRecordService {
     }
 
     //GET ALL
+    @Transactional(readOnly = true)
     public Page<ClinicalRecord> getAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return clinicalRecordRepository.findAll(pageable);
     }
 
     //GET BY ID
+    @Transactional(readOnly = true)
     public ClinicalRecord findById(UUID clinicalRecordId) {
         return clinicalRecordRepository.findById(clinicalRecordId)
                 .orElseThrow(() -> new NotFoundException("ClinicalRecord with id " + clinicalRecordId + " not found"));
     }
 
     //GET BY PATIENT
+    @Transactional(readOnly = true)
     public ClinicalRecord findByPatient(UUID patientId) {
         return clinicalRecordRepository.findByPatient_Id(patientId)
                 .orElseThrow(() -> new NotFoundException("ClinicalRecord for patient " + patientId + " not found"));
     }
 
     //SAVE
+    @Transactional
     public ClinicalRecord saveClinicalRecord(ClinicalRecordCreateDTO payload) {
         Patient patient = patientService.findById(payload.patientId());
 
@@ -65,6 +70,7 @@ public class ClinicalRecordService {
     }
 
     //UPDATE
+    @Transactional
     public ClinicalRecord findByIdAndUpdate(UUID id, ClinicalRecordUpdateDTO payload) {
         ClinicalRecord found = this.findById(id);
 
@@ -79,6 +85,7 @@ public class ClinicalRecordService {
     }
 
     //DELETE
+    @Transactional
     public void findByIdAndDelete(UUID id) {
         ClinicalRecord found = this.findById(id);
         clinicalRecordRepository.delete(found);

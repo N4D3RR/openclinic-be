@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -29,18 +30,21 @@ public class QuoteItemService {
     }
 
     //GET ALL
+    @Transactional(readOnly = true)
     public Page<QuoteItem> getAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return quoteItemRepository.findAll(pageable);
     }
 
     //GET BY ID
+    @Transactional(readOnly = true)
     public QuoteItem findById(UUID quoteItemId) {
         return quoteItemRepository.findById(quoteItemId)
                 .orElseThrow(() -> new NotFoundException("QuoteItem with id " + quoteItemId + " not found"));
     }
 
     //GET BY QUOTE
+    @Transactional(readOnly = true)
     public Page<QuoteItem> findByQuote(UUID quoteId, User currentUser, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         quoteService.findById(quoteId, currentUser);
@@ -48,6 +52,7 @@ public class QuoteItemService {
     }
 
     //SAVE
+    @Transactional
     public QuoteItem saveQuoteItem(QuoteItemCreateDTO payload, User currentUser) {
         Quote quote = quoteService.findById(payload.quoteId(), currentUser);
 
@@ -70,6 +75,7 @@ public class QuoteItemService {
     }
 
     //UPDATE
+    @Transactional
     public QuoteItem findByIdAndUpdate(UUID id, QuoteItemUpdateDTO payload, User currentUser) {
         QuoteItem found = this.findById(id);
         quoteService.findById(found.getQuote().getId(), currentUser);
@@ -85,6 +91,7 @@ public class QuoteItemService {
     }
 
     //DELETE
+    @Transactional
     public void findByIdAndDelete(UUID id, User currentUser) {
         QuoteItem found = this.findById(id);
         quoteService.findById(found.getQuote().getId(), currentUser);

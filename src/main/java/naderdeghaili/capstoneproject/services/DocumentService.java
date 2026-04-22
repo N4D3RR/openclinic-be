@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
@@ -30,36 +31,42 @@ public class DocumentService {
     }
 
     //GET ALL
+    @Transactional(readOnly = true)
     public Page<Document> getAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return documentRepository.findAll(pageable);
     }
 
     //GET BY ID
+    @Transactional(readOnly = true)
     public Document findById(UUID documentId) {
         return documentRepository.findById(documentId)
                 .orElseThrow(() -> new NotFoundException("Document with id " + documentId + " not found"));
     }
 
     //GET BY CLINICAL RECORD
+    @Transactional(readOnly = true)
     public Page<Document> findByClinicalRecord(UUID clinicalRecordId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return documentRepository.findByClinicalRecord_Id(clinicalRecordId, pageable);
     }
 
     //GET BY PATIENT
+    @Transactional(readOnly = true)
     public Page<Document> findByPatient(UUID patientId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return documentRepository.findByClinicalRecord_Patient_Id(patientId, pageable);
     }
 
     //GET BY CLINICAL RECORD AND TYPE
+    @Transactional(readOnly = true)
     public Page<Document> findByClinicalRecordAndType(UUID clinicalRecordId, DocumentType type, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return documentRepository.findByClinicalRecord_IdAndType(clinicalRecordId, type, pageable);
     }
 
     //SAVE
+    @Transactional
     public Document saveDocument(MultipartFile file, UUID clinicalRecordId, DocumentType type, String notes) {
 
         ClinicalRecord clinicalRecord = clinicalRecordService.findById(clinicalRecordId);
@@ -82,6 +89,7 @@ public class DocumentService {
     }
 
     //UPDATE
+    @Transactional
     public Document findByIdAndUpdate(UUID id, DocumentUpdateDTO payload) {
         Document found = this.findById(id);
 
@@ -95,6 +103,7 @@ public class DocumentService {
     }
 
     //DELETE
+    @Transactional
     public void findByIdAndDelete(UUID id) {
         Document found = this.findById(id);
         documentRepository.delete(found);

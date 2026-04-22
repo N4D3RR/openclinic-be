@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -32,6 +33,7 @@ public class AppointmentService {
     }
 
     //GET ALL - ADMIN e SECRETARY see anything, DENTIST only their own
+    @Transactional(readOnly = true)
     public Page<Appointment> getAll(User currentUser, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         if (isAdminOrSecretary(currentUser)) {
@@ -41,6 +43,7 @@ public class AppointmentService {
     }
 
     //GET BY ID - ADMIN e SECRETARY see anything, DENTIST only their own
+    @Transactional(readOnly = true)
     public Appointment findById(UUID appointmentId, User currentUser) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new NotFoundException("Appointment with id " + appointmentId + " not found"));
@@ -49,12 +52,14 @@ public class AppointmentService {
     }
 
     //GET BY ID
+    @Transactional(readOnly = true)
     public Appointment findById(UUID appointmentId) {
         return appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new NotFoundException("Appointment with id " + appointmentId + " not found"));
     }
 
     //GET BY PATIENT - ADMIN e SECRETARY see anything, DENTIST only their own
+    @Transactional(readOnly = true)
     public Page<Appointment> findByPatient(UUID patientId, User currentUser, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         if (isAdminOrSecretary(currentUser)) {
@@ -64,12 +69,14 @@ public class AppointmentService {
     }
 
     //GET BY USER - APPUNTAMENTI SINGOLO DENTISTA
+    @Transactional(readOnly = true)
     public Page<Appointment> findByUser(UUID userId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return appointmentRepository.findByUser_Id(userId, pageable);
     }
 
     //GET BY DATE RANGE - ADMIN e SECRETARY see anything, DENTIST only their own
+    @Transactional(readOnly = true)
     public Page<Appointment> findByDateRange(User currentUser, LocalDateTime start, LocalDateTime end, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         if (isAdminOrSecretary(currentUser)) {
@@ -79,6 +86,7 @@ public class AppointmentService {
     }
 
     //SAVE - ADMIN e SECRETARY salvano tutto, DENTIST/HYGIENIST only their own appuntamenti
+    @Transactional
     public Appointment saveAppointment(AppointmentCreateDTO payload, User currentUser) {
         Patient patient = patientService.findById(payload.patientId());
         User user;
@@ -118,6 +126,7 @@ public class AppointmentService {
     }
 
     //UPDATE - ADMIN e SECRETARY modificano tutto, DENTIST only their own
+    @Transactional
     public Appointment findByIdAndUpdate(UUID id, AppointmentUpdateDTO payload, User currentUser) {
         Appointment found = this.findById(id, currentUser);
 
@@ -138,6 +147,7 @@ public class AppointmentService {
     }
 
     //UPDATE STATUS
+    @Transactional
     public Appointment updateStatus(UUID appointmentId, AppointmentStatus status, User currentUser) {
         Appointment found = this.findById(appointmentId, currentUser);
         found.setStatus(status);
@@ -147,6 +157,7 @@ public class AppointmentService {
     }
 
     //DELETE - ADMIN/SECRETARY eliminano tutto, DENTIST/HYGIENIST only their own
+    @Transactional
     public void findByIdAndDelete(UUID id, User currentUser) {
 
         Appointment found = this.findById(id, currentUser);

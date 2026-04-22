@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -38,41 +39,48 @@ public class PaymentService {
     }
 
     //GET ALL
+    @Transactional(readOnly = true)
     public Page<Payment> getAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return paymentRepository.findAll(pageable);
     }
 
     //GET BY ID
+    @Transactional(readOnly = true)
     public Payment findById(UUID paymentId) {
         return paymentRepository.findById(paymentId)
                 .orElseThrow(() -> new NotFoundException("Payment with id " + paymentId + " not found"));
     }
 
     //GET BY PATIENT
+    @Transactional(readOnly = true)
     public Page<Payment> findByPatient(UUID patientId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return paymentRepository.findByPatient_Id(patientId, pageable);
     }
 
     //GET BY APPOINTMENT
+    @Transactional(readOnly = true)
     public Page<Payment> findByAppointment(UUID appointmentId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return paymentRepository.findByAppointment_Id(appointmentId, pageable);
     }
 
     //GET BY STATUS
+    @Transactional(readOnly = true)
     public Page<Payment> findByStatus(PaymentStatus status, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return paymentRepository.findByStatus(status, pageable);
     }
 
     //GET PENDING PAYMENTS BY PATIENT (debts calculation)
+    @Transactional(readOnly = true)
     public List<Payment> findPendingByPatient(UUID patientId) {
         return paymentRepository.findByPatient_IdAndStatus(patientId, PaymentStatus.PENDING);
     }
 
     //SAVE
+    @Transactional
     public Payment savePayment(PaymentCreateDTO payload) {
         Patient patient = patientService.findById(payload.patientId());
 
@@ -95,6 +103,7 @@ public class PaymentService {
     }
 
     //UPDATE
+    @Transactional
     public Payment findByIdAndUpdate(UUID id, PaymentUpdateDTO payload) {
         Payment found = this.findById(id);
 
@@ -109,6 +118,7 @@ public class PaymentService {
     }
 
     //DELETE
+    @Transactional
     public void findByIdAndDelete(UUID id) {
         Payment found = this.findById(id);
         paymentRepository.delete(found);
@@ -116,12 +126,14 @@ public class PaymentService {
     }
 
     //GET BY PERIOD
+    @Transactional(readOnly = true)
     public Page<Payment> findByDateRange(LocalDate from, LocalDate to, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return paymentRepository.findByPaymentDateBetween(from, to, pageable);
     }
 
     //GET BY PERIOD AND STATUS
+    @Transactional(readOnly = true)
     public Page<Payment> findByDateRangeAndStatus(LocalDate from, LocalDate to, PaymentStatus status, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return paymentRepository.findByPaymentDateBetweenAndStatus(from, to, status, pageable);
